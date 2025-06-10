@@ -1,0 +1,53 @@
+{
+    "description": "An energetic hard cut from the end of Popstar's verse into the chorus of Happy.",
+    "total_duration": 220.0,
+    "script": [
+      {
+        "time": 0.0,
+        "command": "load_track",
+        "params": {
+          "deck": "A",
+          "file_path": "analysis/popstar_analysis.json",
+          "target_bpm": 161.5
+        }
+      },
+      {
+        "time": 0.0,
+        "command": "load_track",
+        "params": {
+          "deck": "B",
+          "file_path": "analysis/happy_analysis.json",
+          "target_bpm": 161.5
+        }
+      },
+      {
+        "time": 1.0,
+        "command": "play",
+        "params": { "deck": "A" }
+      },
+      {
+        "time": 190.5,
+        "command": "seek_to_time",
+        "params": { "deck": "B", "time_in_seconds": 31.16 }
+      },
+      {
+        "time": 190.6,
+        "command": "set_parameter",
+        "params": {
+          "deck": "A",
+          "parameter": "volume",
+          "value": 0.0
+        }
+      },
+      {
+        "time": 190.6,
+        "command": "stop",
+        "params": { "deck": "A" }
+      },
+      {
+        "time": 190.6,
+        "command": "play",
+        "params": { "deck": "B" }
+      }
+    ]
+  }

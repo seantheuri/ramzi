@@ -3,5 +3,18 @@ pydub
 soundfile
 pyacoustid
 spotipy
-python‑dotenv
+python-dotenv
 openai
+matplotlib
+scipy
+numpy
+typing-extensions
+dataclasses-json
+rich
+click
+# Additional dependencies for Phase 1 analysis
+msaf
+allin1
+openai-whisper
+torch
+madmom

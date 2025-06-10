@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Analysis Visualizer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+        color: white;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 30px;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .lyrics-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .lyrics-line {
+        padding: 5px 0;
+        transition: all 0.3s ease;
+        opacity: 0.6;
+      }
+
+      .lyrics-line.active {
+        opacity: 1;
+        background: rgba(255, 215, 0, 0.2);
+        border-radius: 5px;
+        padding: 8px 10px;
+        transform: scale(1.02);
+      }
+
+      .lyrics-word {
+        display: inline-block;
+        margin-right: 5px;
+        transition: all 0.2s ease;
+      }
+
+      .lyrics-word.active {
+        color: #ffd700;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      }
+
+      .file-inputs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .file-input-group {
+        flex: 1;
+        min-width: 250px;
+      }
+
+      .file-input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .file-input-group input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .file-input-group input::file-selector-button {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        color: white;
+        margin-right: 10px;
+      }
+
+      .info-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .info-card {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .info-card h3 {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+        opacity: 0.8;
+      }
+
+      .info-card p {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .waveform-container {
+        position: relative;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      #waveformCanvas {
+        width: 100%;
+        height: 200px;
+        cursor: pointer;
+        display: block;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .time-display {
+        font-family: "Courier New", monospace;
+        font-size: 18px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 15px;
+        border-radius: 5px;
+      }
+
+      .segments-container {
+        margin-top: 20px;
+      }
+
+      .segments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+
+      .segment-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+      }
+
+      .segment-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .segment-btn.active {
+        background: rgba(255, 215, 0, 0.3);
+        border: 2px solid gold;
+      }
+
+      .segment-label {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9em;
+      }
+
+      .segment-time {
+        font-size: 0.8em;
+        opacity: 0.8;
+        font-family: "Courier New", monospace;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 20px;
+        font-size: 18px;
+      }
+
+      .error {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid rgba(255, 0, 0, 0.5);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎵 Audio Analysis Visualizer</h1>
+      </div>
+
+      <div class="file-inputs">
+        <div class="file-input-group">
+          <label for="audioFile">Select Audio File:</label>
+          <input type="file" id="audioFile" accept="audio/*" />
+        </div>
+        <div class="file-input-group">
+          <label for="jsonFile">Select Analysis JSON File:</label>
+          <input type="file" id="jsonFile" accept=".json" />
+        </div>
+      </div>
+
+      <div id="infoPanel" class="info-panel" style="display: none">
+        <!-- Info cards will be populated by JavaScript -->
+      </div>
+
+      <div
+        class="waveform-container"
+        style="display: none"
+        id="waveformContainer"
+      >
+        <canvas id="waveformCanvas"></canvas>
+      </div>
+
+      <div class="controls" style="display: none" id="controls">
+        <button class="btn" id="playBtn">▶️ Play</button>
+        <button class="btn" id="pauseBtn" disabled>⏸️ Pause</button>
+        <button class="btn" id="stopBtn" disabled>⏹️ Stop</button>
+        <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+      </div>
+
+      <div class="lyrics-container" style="display: none" id="lyricsContainer">
+        <h3>🎤 Lyrics</h3>
+        <div id="lyricsContent">
+          <!-- Lyrics will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div
+        class="segments-container"
+        style="display: none"
+        id="segmentsContainer"
+      >
+        <h3>📍 Song Structure (Click to Jump)</h3>
+        <div class="segments-grid" id="segmentsGrid">
+          <!-- Segments will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div id="loading" class="loading" style="display: none">
+        Loading and processing files...
+      </div>
+
+      <div id="error" class="error" style="display: none"></div>
+    </div>
+
+    <audio id="audioPlayer" style="display: none"></audio>
+
+    <script>
+      class AudioVisualizer {
+        constructor() {
+          this.audioPlayer = document.getElementById("audioPlayer");
+          this.canvas = document.getElementById("waveformCanvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.analysisData = null;
+          this.audioBuffer = null;
+          this.isPlaying = false;
+          this.currentTime = 0;
+          this.duration = 0;
+          this.animationId = null;
+          this.currentSegmentIndex = -1;
+          this.currentLyricIndex = -1;
+
+          this.segmentColors = {
+            intro: "#87CEEB",
+            verse: "#90EE90",
+            chorus: "#FFA500",
+            breakdown: "#DA70D6",
+            outro: "#F08080",
+            main: "#D3D3D3",
+          };
+
+          this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+          document
+            .getElementById("audioFile")
+            .addEventListener("change", (e) => this.handleAudioFile(e));
+          document
+            .getElementById("jsonFile")
+            .addEventListener("change", (e) => this.handleJsonFile(e));
+          document
+            .getElementById("playBtn")
+            .addEventListener("click", () => this.play());
+          document
+            .getElementById("pauseBtn")
+            .addEventListener("click", () => this.pause());
+          document
+            .getElementById("stopBtn")
+            .addEventListener("click", () => this.stop());
+          this.canvas.addEventListener("click", (e) =>
+            this.handleCanvasClick(e)
+          );
+          this.audioPlayer.addEventListener("timeupdate", () =>
+            this.updateTime()
+          );
+          this.audioPlayer.addEventListener("loadedmetadata", () =>
+            this.onAudioLoaded()
+          );
+          this.audioPlayer.addEventListener("ended", () => this.onAudioEnded());
+        }
+
+        async handleAudioFile(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          try {
+            const url = URL.createObjectURL(file);
+            this.audioPlayer.src = url;
+
+            // Load audio buffer for waveform visualization
+            const arrayBuffer = await file.arrayBuffer();
+            const audioContext = new (window.AudioContext ||
+              window.webkitAudioContext)();
+            this.audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            console.log(
+              `Audio loaded: ${this.audioBuffer.duration}s, ${this.audioBuffer.sampleRate}Hz`
+            );
+
+            if (this.analysisData) {
+              this.initializeVisualization();
+            }
+          } catch (error) {
+            this.showError("Error loading audio file: " + error.message);
+            console.error("Audio loading error:", error);
+          }
+        }
+
+        async handleJsonFile(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          try {
+            const text = await file.text();
+            this.analysisData = JSON.parse(text);
+
+            if (this.audioBuffer) {
+              this.initializeVisualization();
+            }
+          } catch (error) {
+            this.showError("Error loading JSON file: " + error.message);
+          }
+        }
+
+        initializeVisualization() {
+          if (!this.audioBuffer || !this.analysisData) return;
+
+          this.duration = this.audioBuffer.duration;
+          this.populateInfoPanel();
+          this.populateSegments();
+          this.populateLyrics();
+          this.showInterface();
+
+          // Setup canvas after interface is shown
+          setTimeout(() => {
+            this.setupCanvas();
+          }, 50);
+        }
+
+        setupCanvas() {
+          const container = this.canvas.parentElement;
+
+          // Make sure container is visible first
+          container.style.display = "block";
+
+          // Use a slight delay to ensure proper layout
+          setTimeout(() => {
+            const rect = container.getBoundingClientRect();
+
+            // Fallback dimensions if getBoundingClientRect returns 0
+            const width = rect.width > 0 ? rect.width : 800;
+            const height = 200;
+
+            // Set canvas dimensions
+            this.canvas.width = width;
+            this.canvas.height = height;
+            this.canvas.style.width = width + "px";
+            this.canvas.style.height = height + "px";
+
+            console.log(
+              `Canvas setup: ${this.canvas.width}x${this.canvas.height}, container rect:`,
+              rect
+            );
+
+            // Redraw waveform after canvas setup
+            this.drawWaveform();
+          }, 10);
+        }
+
+        drawWaveform() {
+          const width = this.canvas.width;
+          const height = this.canvas.height;
+
+          console.log(
+            `Drawing waveform with canvas dimensions: ${width}x${height}`
+          );
+
+          if (width === 0 || height === 0) {
+            console.log("Canvas has zero dimensions, skipping draw");
+            return;
+          }
+
+          this.ctx.clearRect(0, 0, width, height);
+
+          // Draw a test border to ensure canvas is working
+          this.ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+          this.ctx.lineWidth = 1;
+          this.ctx.strokeRect(0, 0, width, height);
+
+          // Draw segment backgrounds
+          this.drawSegmentBackgrounds(width, height);
+
+          // Draw waveform
+          this.drawWaveformData(width, height);
+
+          // Draw beat markers
+          this.drawBeatMarkers(width, height);
+
+          // Draw playback position
+          if (this.isPlaying || this.currentTime > 0) {
+            this.drawPlaybackPosition(width, height);
+          }
+        }
+
+        drawSegmentBackgrounds(width, height) {
+          if (!this.analysisData.structural_analysis) return;
+
+          this.analysisData.structural_analysis.forEach((segment) => {
+            const startX = (segment.start / this.duration) * width;
+            const endX = (segment.end / this.duration) * width;
+            const segmentWidth = endX - startX;
+
+            this.ctx.fillStyle =
+              this.segmentColors[segment.label] || this.segmentColors["main"];
+            this.ctx.globalAlpha = 0.3;
+            this.ctx.fillRect(startX, 0, segmentWidth, height);
+            this.ctx.globalAlpha = 1.0;
+
+            // Draw segment label
+            this.ctx.fillStyle = "white";
+            this.ctx.font = "bold 12px Arial";
+            this.ctx.textAlign = "center";
+            this.ctx.fillText(
+              segment.label.toUpperCase(),
+              startX + segmentWidth / 2,
+              20
+            );
+          });
+        }
+
+        drawWaveformData(width, height) {
+          if (!this.audioBuffer) {
+            console.log("No audio buffer available for waveform");
+            return;
+          }
+
+          const channelData = this.audioBuffer.getChannelData(0);
+          const samplesPerPixel = channelData.length / width;
+
+          console.log(
+            `Drawing waveform: ${width}x${height}, samples: ${channelData.length}, samplesPerPixel: ${samplesPerPixel}`
+          );
+
+          this.ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+          this.ctx.lineWidth = 0.5;
+
+          // Draw the waveform as vertical lines (more traditional approach)
+          for (let x = 0; x < width; x++) {
+            const startSample = Math.floor(x * samplesPerPixel);
+            const endSample = Math.floor((x + 1) * samplesPerPixel);
+
+            let min = 0,
+              max = 0;
+            for (let i = startSample; i < endSample; i++) {
+              const sample = channelData[i] || 0;
+              min = Math.min(min, sample);
+              max = Math.max(max, sample);
+            }
+
+            // Convert amplitude to pixel coordinates
+            const y1 = height / 2 + (min * height) / 2;
+            const y2 = height / 2 + (max * height) / 2;
+
+            // Draw vertical line for this x position
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, y1);
+            this.ctx.lineTo(x, y2);
+            this.ctx.stroke();
+          }
+
+          console.log("Waveform drawing completed");
+        }
+
+        drawBeatMarkers(width, height) {
+          if (!this.analysisData.beat_grid_seconds) return;
+
+          this.analysisData.beat_grid_seconds.forEach((beatTime, index) => {
+            const x = (beatTime / this.duration) * width;
+
+            // Every 4th beat (downbeat) is more prominent
+            if (index % 4 === 0) {
+              this.ctx.strokeStyle = "rgba(255, 0, 0, 0.8)";
+              this.ctx.lineWidth = 2;
+              this.ctx.setLineDash([5, 5]);
+            } else {
+              this.ctx.strokeStyle = "rgba(255, 0, 0, 0.3)";
+              this.ctx.lineWidth = 1;
+              this.ctx.setLineDash([]);
+            }
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, height);
+            this.ctx.stroke();
+          });
+
+          this.ctx.setLineDash([]);
+        }
+
+        drawPlaybackPosition(width, height) {
+          const x = (this.currentTime / this.duration) * width;
+
+          this.ctx.strokeStyle = "#FFD700";
+          this.ctx.lineWidth = 3;
+          this.ctx.beginPath();
+          this.ctx.moveTo(x, 0);
+          this.ctx.lineTo(x, height);
+          this.ctx.stroke();
+        }
+
+        populateInfoPanel() {
+          const panel = document.getElementById("infoPanel");
+          panel.innerHTML = `
+                    <div class="info-card">
+                        <h3>BPM</h3>
+                        <p>${this.analysisData.bpm}</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Key</h3>
+                        <p>${this.analysisData.key_standard}</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Camelot</h3>
+                        <p>${this.analysisData.key_camelot || "N/A"}</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Energy</h3>
+                        <p>${(
+                          parseFloat(this.analysisData.energy_normalized) * 100
+                        ).toFixed(1)}%</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Duration</h3>
+                        <p>${this.formatTime(this.duration)}</p>
+                    </div>
+                `;
+        }
+
+        populateSegments() {
+          const grid = document.getElementById("segmentsGrid");
+          grid.innerHTML = "";
+
+          if (!this.analysisData.structural_analysis) return;
+
+          this.analysisData.structural_analysis.forEach((segment, index) => {
+            const btn = document.createElement("button");
+            btn.className = "segment-btn";
+            btn.innerHTML = `
+                          <div class="segment-label">${segment.label}</div>
+                          <div class="segment-time">${this.formatTime(
+                            segment.start
+                          )} - ${this.formatTime(segment.end)}</div>
+                      `;
+            btn.style.borderLeft = `4px solid ${
+              this.segmentColors[segment.label] || this.segmentColors["main"]
+            }`;
+            btn.addEventListener("click", () =>
+              this.seekToSegment(segment.start, index)
+            );
+            grid.appendChild(btn);
+          });
+        }
+
+        populateLyrics() {
+          const lyricsContent = document.getElementById("lyricsContent");
+          lyricsContent.innerHTML = "";
+
+          if (
+            !this.analysisData.lyrics_timed ||
+            this.analysisData.lyrics_timed.length === 0
+          ) {
+            lyricsContent.innerHTML = "<p>No lyrics available</p>";
+            return;
+          }
+
+          // Group words into lines based on timing gaps
+          const lines = [];
+          let currentLine = [];
+          let lastEndTime = 0;
+
+          this.analysisData.lyrics_timed.forEach((word, index) => {
+            const gap = word.start - lastEndTime;
+
+            // Start new line if gap is > 1 second or we have 12+ words
+            if (gap > 1.0 || currentLine.length >= 12) {
+              if (currentLine.length > 0) {
+                lines.push(currentLine);
+                currentLine = [];
+              }
+            }
+
+            currentLine.push({ ...word, originalIndex: index });
+            lastEndTime = word.end;
+          });
+
+          // Add the last line
+          if (currentLine.length > 0) {
+            lines.push(currentLine);
+          }
+
+          // Create DOM elements
+          lines.forEach((line, lineIndex) => {
+            const lineDiv = document.createElement("div");
+            lineDiv.className = "lyrics-line";
+            lineDiv.dataset.lineIndex = lineIndex;
+
+            line.forEach((word) => {
+              const wordSpan = document.createElement("span");
+              wordSpan.className = "lyrics-word";
+              wordSpan.textContent = word.word;
+              wordSpan.dataset.start = word.start;
+              wordSpan.dataset.end = word.end;
+              wordSpan.dataset.index = word.originalIndex;
+
+              // Make words clickable to seek
+              wordSpan.addEventListener("click", () => {
+                this.audioPlayer.currentTime = word.start;
+                this.currentTime = word.start;
+                this.drawWaveform();
+              });
+
+              lineDiv.appendChild(wordSpan);
+            });
+
+            lyricsContent.appendChild(lineDiv);
+          });
+        }
+
+        seekToSegment(time, segmentIndex) {
+          this.audioPlayer.currentTime = time;
+          this.currentTime = time;
+          this.updateActiveSegment(segmentIndex);
+          this.drawWaveform();
+        }
+
+        updateActiveSegment(segmentIndex) {
+          // Remove active class from all segments
+          document
+            .querySelectorAll(".segment-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+
+          // Add active class to current segment
+          if (segmentIndex >= 0) {
+            document
+              .querySelectorAll(".segment-btn")
+              [segmentIndex].classList.add("active");
+            this.currentSegmentIndex = segmentIndex;
+          }
+        }
+
+        handleCanvasClick(event) {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const clickTime = (x / rect.width) * this.duration;
+
+          this.audioPlayer.currentTime = clickTime;
+          this.currentTime = clickTime;
+          this.drawWaveform();
+
+          // Update active segment based on click position
+          if (this.analysisData.structural_analysis) {
+            const segmentIndex =
+              this.analysisData.structural_analysis.findIndex(
+                (segment) =>
+                  clickTime >= segment.start && clickTime < segment.end
+              );
+            if (segmentIndex >= 0) {
+              this.updateActiveSegment(segmentIndex);
+            }
+          }
+        }
+
+        play() {
+          this.audioPlayer.play();
+          this.isPlaying = true;
+          document.getElementById("playBtn").disabled = true;
+          document.getElementById("pauseBtn").disabled = false;
+          document.getElementById("stopBtn").disabled = false;
+          this.startAnimation();
+        }
+
+        pause() {
+          this.audioPlayer.pause();
+          this.isPlaying = false;
+          document.getElementById("playBtn").disabled = false;
+          document.getElementById("pauseBtn").disabled = true;
+          this.stopAnimation();
+        }
+
+        stop() {
+          this.audioPlayer.pause();
+          this.audioPlayer.currentTime = 0;
+          this.currentTime = 0;
+          this.isPlaying = false;
+          document.getElementById("playBtn").disabled = false;
+          document.getElementById("pauseBtn").disabled = true;
+          document.getElementById("stopBtn").disabled = true;
+          this.stopAnimation();
+          this.drawWaveform();
+
+          // Clear active segment
+          document
+            .querySelectorAll(".segment-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          this.currentSegmentIndex = -1;
+
+          // Clear active lyrics
+          document.querySelectorAll(".lyrics-word.active").forEach((word) => {
+            word.classList.remove("active");
+          });
+          document.querySelectorAll(".lyrics-line.active").forEach((line) => {
+            line.classList.remove("active");
+          });
+          this.currentLyricIndex = -1;
+        }
+
+        updateTime() {
+          this.currentTime = this.audioPlayer.currentTime;
+          document.getElementById(
+            "timeDisplay"
+          ).textContent = `${this.formatTime(
+            this.currentTime
+          )} / ${this.formatTime(this.duration)}`;
+
+          // Update active segment based on current time
+          if (this.analysisData.structural_analysis) {
+            const segmentIndex =
+              this.analysisData.structural_analysis.findIndex(
+                (segment) =>
+                  this.currentTime >= segment.start &&
+                  this.currentTime < segment.end
+              );
+            if (
+              segmentIndex >= 0 &&
+              segmentIndex !== this.currentSegmentIndex
+            ) {
+              this.updateActiveSegment(segmentIndex);
+            }
+          }
+
+          // Update active lyrics
+          this.updateActiveLyrics();
+        }
+
+        onAudioLoaded() {
+          this.duration = this.audioPlayer.duration;
+        }
+
+        onAudioEnded() {
+          this.stop();
+        }
+
+        startAnimation() {
+          const animate = () => {
+            if (this.isPlaying) {
+              this.drawWaveform();
+              this.animationId = requestAnimationFrame(animate);
+            }
+          };
+          animate();
+        }
+
+        stopAnimation() {
+          if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+          }
+        }
+
+        updateActiveLyrics() {
+          if (
+            !this.analysisData.lyrics_timed ||
+            this.analysisData.lyrics_timed.length === 0
+          )
+            return;
+
+          // Remove all active classes
+          document.querySelectorAll(".lyrics-word.active").forEach((word) => {
+            word.classList.remove("active");
+          });
+          document.querySelectorAll(".lyrics-line.active").forEach((line) => {
+            line.classList.remove("active");
+          });
+
+          // Find current word
+          const currentWord = document.querySelector(
+            `.lyrics-word[data-start="${this.currentTime}"] ~ .lyrics-word, .lyrics-word[data-start]:not([data-start="${this.currentTime}"]):not(:last-child)`
+          );
+
+          // Alternative approach: find by time range
+          const allWords = document.querySelectorAll(".lyrics-word");
+          let activeWord = null;
+          let activeLine = null;
+
+          allWords.forEach((wordElement) => {
+            const start = parseFloat(wordElement.dataset.start);
+            const end = parseFloat(wordElement.dataset.end);
+
+            if (this.currentTime >= start && this.currentTime <= end) {
+              activeWord = wordElement;
+              activeLine = wordElement.parentElement;
+            }
+          });
+
+          if (activeWord) {
+            activeWord.classList.add("active");
+            activeLine.classList.add("active");
+
+            // Scroll to active line
+            const lyricsContainer = document.getElementById("lyricsContainer");
+            const containerRect = lyricsContainer.getBoundingClientRect();
+            const lineRect = activeLine.getBoundingClientRect();
+
+            if (
+              lineRect.bottom > containerRect.bottom ||
+              lineRect.top < containerRect.top
+            ) {
+              activeLine.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }
+        }
+
+        showInterface() {
+          document.getElementById("infoPanel").style.display = "grid";
+          document.getElementById("waveformContainer").style.display = "block";
+          document.getElementById("controls").style.display = "flex";
+          document.getElementById("segmentsContainer").style.display = "block";
+
+          // Show lyrics only if available
+          if (
+            this.analysisData.lyrics_timed &&
+            this.analysisData.lyrics_timed.length > 0
+          ) {
+            document.getElementById("lyricsContainer").style.display = "block";
+          }
+        }
+
+        showError(message) {
+          const errorDiv = document.getElementById("error");
+          errorDiv.textContent = message;
+          errorDiv.style.display = "block";
+          setTimeout(() => {
+            errorDiv.style.display = "none";
+          }, 5000);
+        }
+
+        formatTime(seconds) {
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60);
+          return `${mins.toString().padStart(2, "0")}:${secs
+            .toString()
+            .padStart(2, "0")}`;
+        }
+      }
+
+      // Initialize the application
+      document.addEventListener("DOMContentLoaded", () => {
+        new AudioVisualizer();
+      });
+    </script>
+  </body>
+</html>

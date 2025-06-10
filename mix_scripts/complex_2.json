@@ -1,0 +1,51 @@
+{
+    "total_duration": 200.0,
+    "script": [
+      { "time": 0.0, "command": "load_track", "params": {
+          "deck": "A",
+          "file_path": "analysis/family_ties_analysis.json",
+          "target_bpm": 132.5
+      }},
+      { "time": 0.0, "command": "load_track", "params": {
+          "deck": "B",
+          "file_path": "analysis/just_wanna_rock_analysis.json",
+          "target_bpm": 132.5        
+      }},
+  
+      { "time": 0.05, "command": "set_segment",
+        "params": { "deck": "A", "segment": "beat" } },
+  
+      { "time": 0.05, "command": "set_segment",
+        "params": { "deck": "B", "segment": "vocals" } },
+  
+      { "time": 0.06, "command": "set_crossfader",
+        "params": { "position": 0.5 } },
+  
+      { "time": 0.06, "command": "set_parameter",
+        "params": { "deck": "A", "parameter": "channel_fader", "value": 1.0 } },
+  
+      { "time": 0.06, "command": "set_parameter",
+        "params": { "deck": "B", "parameter": "channel_fader", "value": 1.0 } },
+  
+      { "time": 0.10, "command": "play", "params": { "deck": "A" } },
+  
+      { "time": 3.60, "command": "play", "params": { "deck": "B" } },
+  
+      { "time": 3.60, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "filter_cutoff_hz", "value": 0.0
+      }},
+      { "time": 3.60, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "filter_cutoff_hz",
+          "value": 1.0, "fade_duration": 16.0
+      }},
+  
+      { "time": 170.0, "command": "set_master_level",
+        "params": { "level": 0.8 } },
+  
+      { "time": 185.0, "command": "set_master_level",
+        "params": { "level": 0.0, "fade_duration": 10.0 } },
+  
+      { "time": 195.5, "command": "stop", "params": { "deck": "A" } },
+      { "time": 195.5, "command": "stop", "params": { "deck": "B" } }
+    ]
+  }

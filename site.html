@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI DJ Mixer - Create Professional Mixes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .deck-label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .file-input-label.has-file {
+            border-style: solid;
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-info p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .mix-settings {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mix-settings h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .setting-group select,
+        .setting-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+        }
+
+        .setting-group select option {
+            background: #2a5298;
+        }
+
+        .setting-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .progress-section.show {
+            display: block;
+        }
+
+        .progress-step {
+            margin-bottom: 20px;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-step.active {
+            opacity: 1;
+        }
+
+        .progress-step.complete {
+            opacity: 0.8;
+        }
+
+        .progress-step h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-icon.complete {
+            background: #4caf50;
+        }
+
+        .step-icon.active {
+            background: #ff9800;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            text-align: center;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-section h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #4caf50;
+        }
+
+        .mix-description {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .technique-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .technique-tag {
+            background: rgba(102, 126, 234, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: white;
+            padding: 20px 60px;
+            font-size: 1.2em;
+            margin: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .analysis-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .analysis-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .analysis-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .analysis-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-tab.active {
+            border-bottom-color: #4caf50;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .analysis-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .visualization-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .track-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .track-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .track-info h4 {
+            margin-bottom: 15px;
+            color: #4caf50;
+        }
+
+        .track-info p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .track-info span {
+            font-weight: bold;
+        }
+
+        .mix-stats {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mix-stats h4 {
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎧 AI DJ Mixer</h1>
+        <p>Upload two tracks and let RAMZI create a professional mix using advanced DJ techniques</p>
+    </div>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-card">
+                <h2><span class="deck-label">DECK A</span> Outgoing Track</h2>
+                <div class="file-input-wrapper">
+                    <input type="file" id="trackA" accept="audio/*" />
+                    <label for="trackA" class="file-input-label">
+                        <span class="upload-text">📁 Choose track or drag & drop</span>
+                    </label>
+                </div>
+                <div class="file-info" id="trackAInfo">
+                    <p><strong>File:</strong> <span class="filename"></span></p>
+                    <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    <p><strong>Type:</strong> <span class="filetype"></span></p>
+                </div>
+            </div>
+
+            <div class="upload-card">
+                <h2><span class="deck-label">DECK B</span> Incoming Track</h2>
+                <div class="file-input-wrapper">
+                    <input type="file" id="trackB" accept="audio/*" />
+                    <label for="trackB" class="file-input-label">
+                        <span class="upload-text">📁 Choose track or drag & drop</span>
+                    </label>
+                </div>
+                <div class="file-info" id="trackBInfo">
+                    <p><strong>File:</strong> <span class="filename"></span></p>
+                    <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    <p><strong>Type:</strong> <span class="filetype"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mix Settings -->
+        <div class="mix-settings">
+            <h2>⚙️ Mix Settings</h2>
+            <div class="setting-group">
+                <label for="mixStyle">Mix Style</label>
+                <select id="mixStyle">
+                    <option value="blend">Smooth Blend - Long, harmonic transitions</option>
+                    <option value="cut">Quick Cut - Hip-hop style with transforms</option>
+                    <option value="creative">Creative - Advanced techniques showcase</option>
+                    <option value="harmonic">Harmonic - Key-focused mixing</option>
+                    <option value="buildup">Buildup - Tension and release</option>
+                    <option value="mashup">Mashup - Creative layering</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="userPrompt">Custom Instructions (Optional)</label>
+                <textarea id="userPrompt" placeholder="E.g., 'Festival main stage energy with epic buildup' or 'Smooth jazz lounge vibe'"></textarea>
+            </div>
+            <div class="setting-group">
+                <label for="targetBPM">Target BPM (Optional)</label>
+                <input type="number" id="targetBPM" min="60" max="200" placeholder="Leave empty for auto-detect" 
+                       style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); 
+                              border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; 
+                              color: white; font-size: 1em;">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="createMixBtn" disabled>
+                🎛️ Create Mix
+            </button>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <h2>🎵 Creating Your Mix...</h2>
+            
+            <div class="progress-step" id="step1">
+                <h3><span class="step-icon">1</span> Analyzing Track A</h3>
+                <p>Extracting BPM, key, structure, and beats...</p>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+
+            <div class="progress-step" id="step2">
+                <h3><span class="step-icon">2</span> Analyzing Track B</h3>
+                <p>Extracting BPM, key, structure, and beats...</p>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+
+            <div class="progress-step" id="step3">
+                <h3><span class="step-icon">3</span> AI Mix Planning</h3>
+                <p>RAMZI is creating the perfect transition strategy...</p>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+
+            <div class="progress-step" id="step4">
+                <h3><span class="step-icon">4</span> Rendering Audio</h3>
+                <p>Applying effects and creating the final mix...</p>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-section" id="resultSection">
+            <h2>✅ Mix Complete!</h2>
+            
+            <div class="mix-description" id="mixDescription"></div>
+            
+            <div class="technique-list" id="techniqueList"></div>
+
+            <div class="audio-player">
+                <h3>🎧 Preview Your Mix</h3>
+                <audio controls id="audioPlayer"></audio>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn download-btn" id="downloadMixBtn">
+                    ⬇️ Download Mix
+                </button>
+                <button class="btn download-btn" id="downloadScriptBtn" style="background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);">
+                    📄 Download Mix Script
+                </button>
+            </div>
+
+            <!-- Analysis Section -->
+            <div class="analysis-section">
+                <h3>📊 Mix Analysis & Visualization</h3>
+                
+                <!-- Track Comparison -->
+                <div class="track-comparison">
+                    <div class="track-info">
+                        <h4>🎵 Track A</h4>
+                        <p>Name: <span id="trackAName">-</span></p>
+                        <p>BPM: <span id="trackABpm">-</span></p>
+                        <p>Key: <span id="trackAKey">-</span></p>
+                        <p>Energy: <span id="trackAEnergy">-</span></p>
+                    </div>
+                    <div class="track-info">
+                        <h4>🎵 Track B</h4>
+                        <p>Name: <span id="trackBName">-</span></p>
+                        <p>BPM: <span id="trackBBpm">-</span></p>
+                        <p>Key: <span id="trackBKey">-</span></p>
+                        <p>Energy: <span id="trackBEnergy">-</span></p>
+                    </div>
+                </div>
+
+                <!-- Mix Stats -->
+                <div class="mix-stats">
+                    <h4>🎛️ Mix Statistics</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="mixDuration">-</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mixBpm">-</div>
+                            <div class="stat-label">Average BPM</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mixEnergy">-</div>
+                            <div class="stat-label">Energy</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mixKeyMatch">-</div>
+                            <div class="stat-label">Key Match %</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="location.reload()">
+                🔄 Create Another Mix
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // File input handling
+        const trackAInput = document.getElementById('trackA');
+        const trackBInput = document.getElementById('trackB');
+        const trackAInfo = document.getElementById('trackAInfo');
+        const trackBInfo = document.getElementById('trackBInfo');
+        const createMixBtn = document.getElementById('createMixBtn');
+        const progressSection = document.getElementById('progressSection');
+        const resultSection = document.getElementById('resultSection');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let trackAFile = null;
+        let trackBFile = null;
+        let mixResultData = null;
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function handleFileSelect(input, infoDiv, deckLetter) {
+            const file = input.files[0];
+            if (file) {
+                const label = input.nextElementSibling;
+                label.classList.add('has-file');
+                label.querySelector('.upload-text').textContent = `✅ ${file.name}`;
+                
+                infoDiv.querySelector('.filename').textContent = file.name;
+                infoDiv.querySelector('.filesize').textContent = formatFileSize(file.size);
+                infoDiv.querySelector('.filetype').textContent = file.type || 'Unknown';
+                infoDiv.classList.add('show');
+
+                if (deckLetter === 'A') {
+                    trackAFile = file;
+                } else {
+                    trackBFile = file;
+                }
+
+                // Enable create button if both files selected
+                if (trackAFile && trackBFile) {
+                    createMixBtn.disabled = false;
+                }
+            }
+        }
+
+        trackAInput.addEventListener('change', () => handleFileSelect(trackAInput, trackAInfo, 'A'));
+        trackBInput.addEventListener('change', () => handleFileSelect(trackBInput, trackBInfo, 'B'));
+
+        // Drag and drop
+        document.querySelectorAll('.file-input-label').forEach(label => {
+            label.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                label.style.background = 'rgba(255, 255, 255, 0.3)';
+            });
+
+            label.addEventListener('dragleave', () => {
+                label.style.background = '';
+            });
+
+            label.addEventListener('drop', (e) => {
+                e.preventDefault();
+                label.style.background = '';
+                const input = label.previousElementSibling;
+                if (e.dataTransfer.files.length > 0) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Progress management
+        function updateProgress(stepId, progress) {
+            const step = document.getElementById(stepId);
+            step.classList.add('active');
+            const progressFill = step.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = `${progress}%`;
+            }
+            
+            if (progress >= 100) {
+                step.classList.remove('active');
+                step.classList.add('complete');
+                step.querySelector('.step-icon').classList.add('complete');
+                step.querySelector('.step-icon').textContent = '✓';
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Create mix
+        createMixBtn.addEventListener('click', async () => {
+            if (!trackAFile || !trackBFile) {
+                showError('Please select both tracks');
+                return;
+            }
+
+            createMixBtn.disabled = true;
+            progressSection.classList.add('show');
+            resultSection.classList.remove('show');
+
+            const formData = new FormData();
+            formData.append('trackA', trackAFile);
+            formData.append('trackB', trackBFile);
+            formData.append('mixStyle', document.getElementById('mixStyle').value);
+            formData.append('userPrompt', document.getElementById('userPrompt').value || '');
+            
+            const targetBPM = document.getElementById('targetBPM').value;
+            if (targetBPM) {
+                formData.append('targetBPM', targetBPM);
+            }
+
+            try {
+                // Create EventSource for progress updates
+                const response = await fetch('/api/create-mix', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                // Read the response as JSON
+                const result = await response.json();
+                
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                // Simulate progress for demo (in real implementation, use SSE or WebSocket)
+                updateProgress('step1', 100);
+                setTimeout(() => updateProgress('step2', 100), 500);
+                setTimeout(() => updateProgress('step3', 100), 1000);
+                setTimeout(() => updateProgress('step4', 100), 1500);
+
+                // Show results
+                setTimeout(() => {
+                    mixResultData = result;
+                    showResults(result);
+                }, 2000);
+
+            } catch (error) {
+                showError(`Error creating mix: ${error.message}`);
+                progressSection.classList.remove('show');
+                createMixBtn.disabled = false;
+            }
+        });
+
+        function showResults(result) {
+            progressSection.classList.remove('show');
+            resultSection.classList.add('show');
+
+            // Set description
+            document.getElementById('mixDescription').textContent = result.description || 'Your mix is ready!';
+
+            // Set techniques
+            const techniqueList = document.getElementById('techniqueList');
+            techniqueList.innerHTML = '';
+            if (result.techniques && result.techniques.length > 0) {
+                result.techniques.forEach(technique => {
+                    const tag = document.createElement('div');
+                    tag.className = 'technique-tag';
+                    tag.textContent = technique;
+                    techniqueList.appendChild(tag);
+                });
+            }
+
+            // Set audio player
+            if (result.audioUrl) {
+                document.getElementById('audioPlayer').src = result.audioUrl;
+            }
+
+            // Populate analysis section if data is available
+            if (result.trackA) {
+                document.getElementById('trackAName').textContent = result.trackA.name || '-';
+                document.getElementById('trackABpm').textContent = result.trackA.bpm || '-';
+                document.getElementById('trackAKey').textContent = result.trackA.key || '-';
+                document.getElementById('trackAEnergy').textContent = result.trackA.energy || '-';
+            }
+            if (result.trackB) {
+                document.getElementById('trackBName').textContent = result.trackB.name || '-';
+                document.getElementById('trackBBpm').textContent = result.trackB.bpm || '-';
+                document.getElementById('trackBKey').textContent = result.trackB.key || '-';
+                document.getElementById('trackBEnergy').textContent = result.trackB.energy || '-';
+            }
+            if (result.stats) {
+                document.getElementById('mixDuration').textContent = result.stats.duration || '-';
+                document.getElementById('mixBpm').textContent = result.stats.averageBpm || '-';
+                document.getElementById('mixEnergy').textContent = result.stats.energy || '-';
+                document.getElementById('mixKeyMatch').textContent = result.stats.keyMatch || '-';
+            }
+
+            // Set download handlers
+            document.getElementById('downloadMixBtn').onclick = () => {
+                window.location.href = result.audioUrl;
+            };
+
+            document.getElementById('downloadScriptBtn').onclick = () => {
+                window.location.href = result.scriptUrl;
+            };
+        }
+
+        // Initialize
+        createMixBtn.disabled = true;
+    </script>
+</body>
+</html>

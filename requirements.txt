@@ -12,6 +12,10 @@ typing-extensions
 dataclasses-json
 rich
 click
+# Web API dependencies
+flask
+flask-cors
+requests
 # Additional dependencies for Phase 1 analysis
 msaf
 allin1

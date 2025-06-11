@@ -202,16 +202,18 @@ def validate_mix_script(script_data: Dict[str, Any]) -> bool:
 
 def enhance_script_with_defaults(script_data: Dict[str, Any], 
                                analysis_a: Dict[str, Any], 
-                               analysis_b: Dict[str, Any]) -> Dict[str, Any]:
+                               analysis_b: Dict[str, Any],
+                               analysis_file_a: str = None,
+                               analysis_file_b: str = None) -> Dict[str, Any]:
     """Adds helpful defaults and fixes common issues in generated scripts."""
     
-    # Ensure proper file paths in load commands
+    # Ensure proper file paths in load commands (use analysis file paths instead of song paths)
     for cmd in script_data["script"]:
         if cmd["command"] == "load_track":
             if cmd["params"]["deck"] == "A":
-                cmd["params"]["file_path"] = analysis_a["file_path"]
+                cmd["params"]["file_path"] = analysis_file_a if analysis_file_a else analysis_a["file_path"]
             elif cmd["params"]["deck"] == "B":
-                cmd["params"]["file_path"] = analysis_b["file_path"]
+                cmd["params"]["file_path"] = analysis_file_b if analysis_file_b else analysis_b["file_path"]
     
     # Sort commands by time
     script_data["script"].sort(key=lambda x: x["time"])
@@ -320,7 +322,7 @@ def generate_mix_script(analysis_file_a: str, analysis_file_b: str,
             raise ValueError("Generated script failed validation")
         
         # Enhance with defaults and fixes
-        mix_script_data = enhance_script_with_defaults(mix_script_data, data_a, data_b)
+        mix_script_data = enhance_script_with_defaults(mix_script_data, data_a, data_b, analysis_file_a, analysis_file_b)
         
         # Save the script
         with open(output_file_path, 'w') as f:

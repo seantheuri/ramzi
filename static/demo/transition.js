@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE = window.location.hostname === 'localhost' ? 'http://127.0.0.1:5000/api' : '/api';
+const API_BASE = window.location.hostname === 'localhost' ? 'https://ramzi-3c37.onrender.com/api' : '/api';
 
 // Global State
 let transitionScript = null;

@@ -1,7 +1,7 @@
 // API Configuration
 // Determine API base URL more robustly
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://127.0.0.1:5000/api'
+  ? 'https://ramzi-3c37.onrender.com:5000/api'
   : '/api';
 
 // Global State

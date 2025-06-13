@@ -357,30 +357,52 @@ class Deck:
         if sr_original != self.sr:
             y_original = librosa.resample(y=y_original, orig_sr=sr_original, target_sr=self.sr)
 
-        original_bpm = float(self.analysis_data["bpm"])
-
-        # Apply tempo adjustment if target BPM specified
-        if target_bpm:
-            self.y = stretch_audio_to_bpm(y_original, self.sr, original_bpm, target_bpm)
-        else:
-            self.y = y_original
+        # Start with the original audio for all tracks, to be stretched later
+        self.y = y_original
+        self.y_harmonic = None
+        self.y_percussive = None
+        self.y_vocals = None
 
         # --- Source separation ---
         remote = self._split_with_lalal(audio_file_path)
         if remote:
-            self.y_harmonic = remote.get("back") or y_original
-            self.y_percussive = remote.get("drum") or remote.get("beat")
+            # Safely assign stems from the remote source
+            self.y_harmonic = remote.get("back")
+            # Use 'beat' as a fallback for 'drum' if it exists
+            self.y_percussive = remote.get("drum")
+            if self.y_percussive is None:
+                self.y_percussive = remote.get("beat")
             self.y_vocals = remote.get("vocals")
             print("  ✓ Stems obtained via LALAL.ai")
-        else:
-            # Fallback to HPSS if remote split unavailable
+        
+        # If remote separation failed or wasn't available, try local HPSS
+        if self.y_harmonic is None or self.y_percussive is None:
+            print("  - Attempting local stem separation as fallback...")
             try:
-                self.y_harmonic, self.y_percussive = librosa.effects.hpss(self.y)
+                # Only overwrite if stems are missing
+                h, p = librosa.effects.hpss(self.y)
+                if self.y_harmonic is None:
+                    self.y_harmonic = h
+                if self.y_percussive is None:
+                    self.y_percussive = p
                 print("  ✓ Stems obtained via local HPSS")
             except Exception:
-                self.y_harmonic = self.y.copy()
-                self.y_percussive = self.y.copy()
-                print("  ⚠️  Stem separation failed – using full mix for all segments")
+                print("  ⚠️  Stem separation failed")
+
+        # If stems are still missing, use the full mix as a fallback
+        if self.y_harmonic is None:
+            self.y_harmonic = self.y.copy()
+        if self.y_percussive is None:
+            self.y_percussive = self.y.copy()
+
+        # Now, apply tempo adjustment to all available audio tracks consistently
+        original_bpm = float(self.analysis_data["bpm"])
+        if target_bpm:
+            stretch = lambda y: stretch_audio_to_bpm(y, self.sr, original_bpm, target_bpm) if y is not None else None
+            self.y = stretch(self.y)
+            self.y_harmonic = stretch(self.y_harmonic)
+            self.y_percussive = stretch(self.y_percussive)
+            self.y_vocals = stretch(self.y_vocals)
 
         print(
             f"Deck {self.name}: Track loaded. Duration: {librosa.get_duration(y=self.y, sr=self.sr):.2f}s"

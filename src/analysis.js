@@ -723,3 +723,44 @@ function displayEnhancedCompatibility(apiData) {
         ${comp.recommendations ? `<div class="recommendations"><h4>Tips</h4><ul>${comp.recommendations.map(r=>`<li>${r}</li>`).join('')}</ul></div>` : ''}
     `;
 }
+
+if (typeof displayAdvancedFeatures === 'undefined') {
+    function displayAdvancedFeatures(features) {
+        // Create section if it doesn't exist
+        let advSection = document.getElementById('advancedFeatures');
+        if (!advSection) {
+            advSection = document.createElement('div');
+            advSection.id = 'advancedFeatures';
+            advSection.innerHTML = '<h3>Advanced Analysis</h3><div id="advancedFeaturesContent"></div>';
+            const trackInfo = document.getElementById('trackInfo');
+            if (trackInfo && trackInfo.parentNode) {
+                trackInfo.parentNode.appendChild(advSection);
+            }
+        }
+        const content = document.getElementById('advancedFeaturesContent');
+        if (!content) return;
+
+        // Build HTML from features object
+        const rh = features.rhythmic || {};
+        const st = features.structure || {};
+        const dy = features.dynamics || {};
+        content.innerHTML = `
+            <div class="advanced-features-grid">
+                <div class="feature-group">
+                    <h4>Rhythmic</h4>
+                    <p>Tempo Conf.: ${(rh.tempo_confidence*100||0).toFixed(0)}%</p>
+                    <p>Beat Count: ${rh.beat_count||0}</p>
+                </div>
+                <div class="feature-group">
+                    <h4>Structure</h4>
+                    <p>Sections: ${st.section_count||0}</p>
+                    <p>Complexity: ${st.structure_complexity||0}</p>
+                </div>
+                <div class="feature-group">
+                    <h4>Dynamics</h4>
+                    <p>Range: ${dy.loudness_range?.toFixed? dy.loudness_range.toFixed(1):'N/A'} dB</p>
+                    <p>Peak: ${dy.peak_loudness?.toFixed? dy.peak_loudness.toFixed(1):'N/A'} dB</p>
+                </div>
+            </div>`;
+    }
+}

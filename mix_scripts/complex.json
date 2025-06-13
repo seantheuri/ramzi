@@ -1,0 +1,75 @@
+{
+    "total_duration": 210.0,
+    "script": [
+      { "time": 0.0, "command": "load_track", "params": {
+          "deck": "A",
+          "file_path": "analysis/family_ties_analysis.json",
+          "target_bpm": 132.5
+      }},
+      { "time": 0.0, "command": "load_track", "params": {
+          "deck": "B",
+          "file_path": "analysis/just_wanna_rock_analysis.json",
+          "target_bpm": 132.5
+      }},
+  
+      { "time": 0.10, "command": "play", "params": { "deck": "A" }},
+      { "time": 0.10, "command": "set_parameter", "params": {
+          "deck": "A", "parameter": "channel_fader", "value": 1.0
+      }},
+      { "time": 0.15, "command": "set_crossfader", "params": { "position": 0.0 }},
+      { "time": 0.20, "command": "set_master_deck", "params": { "deck": "A" }},
+  
+      { "time": 40.0, "command": "play", "params": { "deck": "B" }},
+      { "time": 40.0, "command": "beat_sync", "params": { "deck": "B" }},
+      { "time": 40.0, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "channel_fader", "value": 1.0
+      }},
+      { "time": 40.0, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "eq_low", "value": 0.0
+      }},
+  
+      { "time": 44.0, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "eq_low", "value": 0.5,
+          "fade_duration": 16.0
+      }},
+      { "time": 44.0, "command": "set_parameter", "params": {
+          "deck": "A", "parameter": "eq_low", "value": 0.0,
+          "fade_duration": 16.0
+      }},
+      { "time": 44.0, "command": "set_crossfader", "params": {
+          "position": 1.0,
+          "fade_duration": 32.0,
+          "curve": "smooth"
+      }},
+  
+      { "time": 78.5, "command": "stop", "params": { "deck": "A" }},
+  
+      { "time": 110.0, "command": "set_beat_fx", "params": {
+          "fx_type": "echo",
+          "channel": "master",
+          "beats": 1,
+          "depth": 0.45
+      }},
+      { "time": 140.0, "command": "beat_fx_off", "params": {} },
+  
+      { "time": 150.0, "command": "auto_loop", "params": {
+          "deck": "B", "beats": 8
+      }},
+      { "time": 150.0, "command": "set_color_fx", "params": {
+          "deck": "B", "fx_type": "filter", "frequency": 400
+      }},
+      { "time": 154.0, "command": "set_color_fx", "params": {
+          "deck": "B", "fx_type": "none"
+      }},
+      { "time": 158.0, "command": "loop_exit", "params": { "deck": "B" }},
+      { "time": 190.0, "command": "set_crossfader", "params": {
+          "position": 0.5, "fade_duration": 10.0
+      }},
+      { "time": 200.0, "command": "set_parameter", "params": {
+          "deck": "B", "parameter": "channel_fader", "value": 0.0,
+          "fade_duration": 5.0
+      }},
+      { "time": 205.0, "command": "stop", "params": { "deck": "B" }}
+  
+    ]
+  }

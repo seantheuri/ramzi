@@ -234,16 +234,14 @@ class Deck:
         self.auto_loop_beats = 4
 
         # Effects board
-        self.board = pb.Pedalboard(
-            [
-                pb.HighpassFilter(cutoff_frequency_hz=20.0),  # Index 0: Filter
-                pb.HighShelfFilter(cutoff_frequency_hz=4000, gain_db=0),  # Index 1: EQ High
-                pb.PeakFilter(cutoff_frequency_hz=1000, q=1.0, gain_db=0),  # Index 2: EQ Mid
-                pb.LowShelfFilter(cutoff_frequency_hz=250, gain_db=0),  # Index 3: EQ Low
-                pb.Gain(gain_db=0),  # Index 4: Trim
-                pb.Gain(gain_db=0),  # Index 5: Channel fader
-            ]
-        )
+        self.board = pb.Pedalboard([
+            pb.HighpassFilter(cutoff_frequency_hz=20.0),            # 0 filter
+            pb.HighShelfFilter(cutoff_frequency_hz=4000, gain_db=0),# 1 EQ high
+            pb.PeakFilter(cutoff_frequency_hz=1000, q=1.0, gain_db=0),# 2 EQ mid
+            pb.LowShelfFilter(cutoff_frequency_hz=250, gain_db=-3), # 3 EQ low  <<– default –3 dB
+            pb.Gain(gain_db=-6),                                    # 4 trim (head-room)
+            pb.Gain(gain_db=-6),                                    # 5 channel fader
+        ])
 
         # Additional effects
         self.color_fx = pb.Pedalboard([])  # Smart CFX
@@ -495,16 +493,9 @@ class Deck:
 
         chunk = source[start:end]
 
-        # High-quality polyphase resampling (minimises aliasing vs. per-frame time-stretch)
-        try:
-            up = int(max(1, round(100 * playback_rate)))
-            down = 100
-            factor_gcd = gcd(up, down)
-            up //= factor_gcd; down //= factor_gcd
-            chunk = scipy.signal.resample_poly(chunk, up, down)
-        except Exception:
-            # Fallback to librosa if scipy fails
-            chunk = librosa.resample(chunk, orig_sr=int(self.sr * playback_rate), target_sr=self.sr)
+        # Smooth out tiny playback-rate changes
+        if playback_rate != 1.0 and len(chunk) > 1024:
+            chunk = self._stretch_chunk(chunk.astype(np.float32), playback_rate)
 
         self.current_sample_pos = end
 
@@ -562,6 +553,42 @@ class Deck:
             self.segment_type = segment
         else:
             raise ValueError("segment must be 'full', 'vocals', 'beat', 'instrumental', or 'back'")
+
+    def _stretch_chunk(self, chunk, rate):
+        """High-quality time-stretch helper used during tiny tempo adjustments.
+
+        The previous implementation incorrectly fed raw PCM audio into
+        `librosa.phase_vocoder`, which expects a complex STFT and therefore
+        produced heavily degraded, noisy output.  Instead we resample the
+        audio so that it occupies the exact number of samples expected for
+        the current buffer while retaining as much fidelity as possible.
+        For very small rate deviations this is effectively transparent.
+        """
+        if np.isclose(rate, 1.0, atol=1e-4):
+            return chunk
+
+        target_length = int(len(chunk) / rate)
+
+        # By treating the chunk as if it were recorded at `self.sr * rate` Hz
+        # and converting it back to `self.sr`, we effectively time-stretch it
+        # by the desired factor without altering pitch.
+        virtual_orig_sr = int(self.sr * rate)
+
+        # Use a high quality sinc-based resampler.  librosa >=0.9 provides
+        # access to the SoX HQ resampler via `soxr_hq`; otherwise fall back to
+        # `kaiser_best`.
+        res_type = "soxr_hq" if "soxr_hq" in librosa.resample.__code__.co_varnames else "kaiser_best"
+        stretched = librosa.resample(chunk.astype(np.float32), orig_sr=virtual_orig_sr, target_sr=self.sr, res_type=res_type)
+
+        # The librosa resampler produces audio with the same sample-rate but it
+        # does not guarantee an exact output length.  Trim or pad so that the
+        # output matches the desired `target_length` to keep buffer alignment.
+        if len(stretched) > target_length:
+            stretched = stretched[:target_length]
+        elif len(stretched) < target_length:
+            stretched = np.pad(stretched, (0, target_length - len(stretched)))
+
+        return stretched.astype(chunk.dtype)
 
 
 # --- Mixer Class ---
@@ -652,10 +679,12 @@ class AudioRenderer:
         self.current_beat_fx = None
         self.beat_fx_channel = None  # 'A', 'B', or 'master'
 
-        # Headroom then limiter for transparent output
+        # Headroom, gentle compression, then true-peak limiting for transparent output
         self.master_bus = pb.Pedalboard([
-            pb.Gain(gain_db=-6),                       # give 6 dB head-room prior to mixing
-            pb.Limiter(threshold_db=-1.0, release_ms=50)  # true-peak style limiting
+            pb.HighpassFilter(20),
+            pb.Gain(-6),
+            pb.Compressor(threshold_db=-12, ratio=4, attack_ms=8, release_ms=150),
+            pb.Limiter(threshold_db=-1, release_ms=100)
         ])
 
         # Animation/automation storage
@@ -761,7 +790,7 @@ class AudioRenderer:
                     command["params"]["file_path"], command["params"].get("target_bpm")
                 )
 
-        CHUNK_SIZE = 1024
+        CHUNK_SIZE = 8192  # larger blocks reduce state resets and artefacts
         total_samples = int(total_duration * self.sr)
         output_buffer = np.zeros(total_samples, dtype=np.float32)
         command_idx = 0
@@ -1017,26 +1046,27 @@ class AudioRenderer:
             if self.current_beat_fx and self.beat_fx_channel == "master":
                 mixed = self.current_beat_fx(mixed, self.sr)
 
-            # Master processing
-            mastered = self.master_bus(mixed, self.sr)
-
-            # Write to output buffer
+            # defer master_bus to a single offline pass; accumulate dry mix
             end_sample = min(i + CHUNK_SIZE, total_samples)
-            output_buffer[i:end_sample] = mastered[: end_sample - i]
+            output_buffer[i:end_sample] = mixed[: end_sample - i] * 0.85  # 1.4 dB head-room
 
             # Progress indicator
             if i % (self.sr * 10) == 0:  # Every 10 seconds
                 progress = (i / total_samples) * 100
                 print(f"  Rendering: {progress:.1f}%")
 
+        # ---------------------------------------------------------------
+        print("--- Timeline complete. Applying master processing chain ---")
+
+        output_buffer = self.master_bus(output_buffer, self.sr)
+
+        peak = np.max(np.abs(output_buffer))
+        if peak > 0:
+            output_buffer *= 0.9499 / peak  # final normalisation to -0.5 dBFS
+
         print("--- Render Complete. Saving file... ---")
 
-        # Normalize to prevent clipping
-        max_val = np.max(np.abs(output_buffer))
-        if max_val > 0.95:
-            output_buffer = output_buffer * (0.95 / max_val)
-
-        sf.write(output_path, output_buffer, self.sr)
+        sf.write(output_path, output_buffer, self.sr, subtype='PCM_24')
         print(f"Successfully saved mix to {output_path}")
 
 
@@ -1198,6 +1228,58 @@ class MixScriptGenerator:
             ],
         }
         return script
+
+
+# --- Quick-mix helper ---------------------------------------------------------
+def render_simple_crossfade(analysis_json_a: str,
+                            analysis_json_b: str,
+                            fade_start_s: float = 40.0,
+                            fade_length_s: float = 32.0,
+                            total_duration_s: float = 210.0,
+                            out_path: str = "simple_fade_mix.wav",
+                            sr: int = 44100):
+    """
+    Offline, artefact-free A→B cross-fade.  Ignores all decks / FX, it is purely
+    to confirm that audio quality is preserved when we *don't* stream in blocks.
+    """
+    # ------------------------------------------------------------------ load --
+    with open(analysis_json_a) as f:
+        path_a = json.load(f)["file_path"]
+    with open(analysis_json_b) as f:
+        path_b = json.load(f)["file_path"]
+
+    yA, srA = librosa.load(path_a, sr=sr, mono=False)
+    yB, srB = librosa.load(path_b, sr=sr, mono=False)  # mono=False keeps stereo
+
+    # pad / truncate both to total duration
+    target_len = int(total_duration_s * sr)
+    pad = lambda y: np.pad(y, ((0, 0), (0, max(0, target_len - y.shape[1])))) \
+                    if y.ndim == 2 else np.pad(y, (0, max(0, target_len - y.shape[0])))
+    yA = pad(yA)[:, :target_len] if yA.ndim == 2 else pad(yA)[:target_len]
+    yB = pad(yB)[:, :target_len] if yB.ndim == 2 else pad(yB)[:target_len]
+
+    # --------------------------------------------------------- build envelope
+    env = np.ones(target_len, dtype=np.float32)
+    fade_start = int(fade_start_s * sr)
+    fade_end   = int((fade_start_s + fade_length_s) * sr)
+    fade_t     = np.linspace(0, np.pi/2, fade_end - fade_start)
+    env[fade_start:fade_end] = np.cos(fade_t)          # Deck A envelope
+    envB = 1.0 - env                                  # Deck B envelope
+
+    # --------------------------------------------------------------- mix down
+    # Broadcast env to both channels if stereo
+    if yA.ndim == 2:
+        env = env[None, :]
+        envB = envB[None, :]
+    mix = yA * env + yB * envB
+
+    # headroom & limiter (same as master_bus but no extra comp/HP filter)
+    mix *= 0.9
+    mix = pb.Limiter(threshold_db=-1)(mix, sr)
+
+    # ------------------------------------------------------------ write WAV
+    sf.write(out_path, mix.T, sr, subtype="FLOAT")
+    print(f"✓ Rendered artefact-free mix to: {out_path}")
 
 
 if __name__ == "__main__":

@@ -110,12 +110,12 @@ Examples:
         """
     )
     
-    parser.add_argument('--host', default='127.0.0.1',
-                       help='Host to bind to (default: 127.0.0.1)')
-    parser.add_argument('--port', type=int, default=5000,
-                       help='Port to bind to (default: 5000)')
+    parser.add_argument('--host', default=None,
+                       help='Host to bind to (default: 127.0.0.1, 0.0.0.0 in production)')
+    parser.add_argument('--port', type=int, default=None,
+                       help='Port to bind to (default: 5000, $PORT in production)')
     parser.add_argument('--debug', action='store_true',
-                       help='Enable debug mode')
+                       help='Enable debug mode (forced off in production)')
     parser.add_argument('--no-checks', action='store_true',
                        help='Skip dependency and environment checks')
     parser.add_argument('--show-endpoints', action='store_true',
@@ -144,11 +144,19 @@ Examples:
     print("📁 Setting up directories...")
     setup_directories()
     
+    # --- Production vs. Development Configuration ---
+    is_production = 'RENDER' in os.environ
+    
+    host = args.host or ('0.0.0.0' if is_production else '127.0.0.1')
+    port = args.port or (int(os.environ.get('PORT', 5000)) if is_production else 5000)
+    debug_mode = args.debug and not is_production
+
     print(f"\n🚀 Starting API server...")
-    print(f"   Host: {args.host}")
-    print(f"   Port: {args.port}")
-    print(f"   Debug: {args.debug}")
-    print(f"   URL: http://{args.host}:{args.port}")
+    print(f"   Mode: {'Production' if is_production else 'Development'}")
+    print(f"   Host: {host}")
+    print(f"   Port: {port}")
+    print(f"   Debug: {debug_mode}")
+    print(f"   URL: http://{host}:{port}")
     
     # Import and run the Flask app
     try:
@@ -160,20 +168,21 @@ Examples:
         
         print("\n✅ API server starting...")
         print_api_endpoints()
-        print("\n🌐 Web Interface:")
-        print(f"   Main Interface: http://{args.host}:{args.port}")
-        print(f"   Analysis Tool:  http://{args.host}:{args.port}/analysis.html")
-        print(f"   Mix Creator:    http://{args.host}:{args.port}/transition.html")
-
         print("\n📖 Documentation:")
         print("   API Reference: API_README.md")
         print("   Search Examples: Use --show-endpoints flag")
         
-        app.run(
-            host=args.host,
-            port=args.port,
-            debug=args.debug
-        )
+        if is_production:
+            from waitress import serve
+            print("\n🏭 Running with Waitress production server.")
+            serve(app, host=host, port=port)
+        else:
+            print("\n🔧 Running with Flask development server.")
+            app.run(
+                host=host,
+                port=port,
+                debug=debug_mode
+            )
         
     except ImportError as e:
         print(f"\n❌ Failed to import API modules: {e}")

@@ -15,4 +15,5 @@ flask
 flask-cors
 requests
 pedalboard
+waitress
 # Additional dependencies for Phase 1 analysis

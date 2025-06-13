@@ -7,6 +7,9 @@ import argparse
 import pedalboard as pb
 from collections import deque
 import scipy.signal
+import requests
+import time
+import io
 
 # --- Helper Functions ---
 
@@ -258,6 +261,74 @@ class Deck:
         # playback segment: 'full', 'vocals', or 'beat'
         self.segment_type = 'full'
 
+    def _split_with_lalal(self, audio_file_path, stem="drum"):
+        """Attempt remote stem separation via LALAL.ai. Returns (harmonic/back, percussive/stem) arrays or None on failure."""
+        api_key = os.environ.get("LALAL_API_KEY")
+        if not api_key:
+            return None
+
+        try:
+            filename = os.path.basename(audio_file_path)
+            upload_headers = {
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Authorization": f"license {api_key}"
+            }
+            with open(audio_file_path, "rb") as f:
+                resp = requests.post("https://www.lalal.ai/api/upload/", data=f, headers=upload_headers, timeout=120)
+            resp.raise_for_status()
+            up_json = resp.json()
+            if up_json.get("status") != "success":
+                print(f"    LALAL upload error: {up_json.get('error')}")
+                return None
+
+            file_id = up_json["id"]
+
+            # Start split task
+            split_params = json.dumps([{"id": file_id, "stem": stem}])
+            split_headers = {"Authorization": f"license {api_key}"}
+            s_resp = requests.post("https://www.lalal.ai/api/split/", data={"params": split_params}, headers=split_headers, timeout=30)
+            s_resp.raise_for_status()
+
+            # Poll for completion
+            for _ in range(120):  # up to ~10 min (120*5s)
+                time.sleep(5)
+                c_resp = requests.post("https://www.lalal.ai/api/check/", data={"id": file_id}, headers=split_headers, timeout=15)
+                c_resp.raise_for_status()
+                c_json = c_resp.json()
+                result = c_json.get("result", {}).get(file_id, {})
+                task = result.get("task") or {}
+                state = task.get("state") or result.get("status")
+                if state == "success" and result.get("split"):
+                    split_info = result["split"]
+                    stem_url = split_info.get("stem_track")
+                    back_url = split_info.get("back_track")
+                    if not stem_url or not back_url:
+                        break
+                    # download
+                    y_perc = self._download_audio(stem_url)
+                    y_back = self._download_audio(back_url)
+                    if y_perc is not None and y_back is not None:
+                        return y_back, y_perc  # harmonic/back first
+                    break
+                elif state == "error":
+                    print(f"    LALAL split error: {result.get('error')}")
+                    return None
+            print("    LALAL split timed out")
+        except Exception as e:
+            print(f"    LALAL split failed: {e}")
+        return None
+
+    def _download_audio(self, url):
+        try:
+            r = requests.get(url, timeout=60)
+            r.raise_for_status()
+            data = io.BytesIO(r.content)
+            y, sr_file = librosa.load(data, sr=self.sr)
+            return y
+        except Exception as e:
+            print(f"        Download error: {e}")
+            return None
+
     def load_track(self, analysis_file_path, target_bpm=None):
         print(f"Deck {self.name}: Loading track from {analysis_file_path}")
         with open(analysis_file_path, "r") as f:
@@ -281,14 +352,20 @@ class Deck:
         else:
             self.y = y_original
 
-        # --- On-the-fly source separation (librosa HPSS) ---
-        # harmonic ≈ vocals/instruments   |   percussive ≈ drums/beat
-        try:
-            self.y_harmonic, self.y_percussive = librosa.effects.hpss(self.y)
-        except Exception:
-            # Fallback: if HPSS fails, just duplicate the full mix
-            self.y_harmonic = self.y.copy()
-            self.y_percussive = self.y.copy()
+        # --- Source separation ---
+        remote_stems = self._split_with_lalal(audio_file_path)
+        if remote_stems:
+            self.y_harmonic, self.y_percussive = remote_stems
+            print("  ✓ Stems obtained via LALAL.ai")
+        else:
+            # Fallback to HPSS if remote split unavailable
+            try:
+                self.y_harmonic, self.y_percussive = librosa.effects.hpss(self.y)
+                print("  ✓ Stems obtained via local HPSS")
+            except Exception:
+                self.y_harmonic = self.y.copy()
+                self.y_percussive = self.y.copy()
+                print("  ⚠️  Stem separation failed – using full mix for all segments")
 
         print(
             f"Deck {self.name}: Track loaded. Duration: {librosa.get_duration(y=self.y, sr=self.sr):.2f}s"

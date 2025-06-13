@@ -10,6 +10,7 @@ import scipy.signal
 import requests
 import time
 import io
+from math import gcd
 
 # --- Helper Functions ---
 
@@ -494,11 +495,16 @@ class Deck:
 
         chunk = source[start:end]
 
-        # Resample to match requested length if tempo adjusted
-        if playback_rate != 1.0 and len(chunk) > 0:
-            chunk = librosa.resample(
-                y=chunk, orig_sr=int(self.sr * playback_rate), target_sr=self.sr
-            )
+        # High-quality polyphase resampling (minimises aliasing vs. per-frame time-stretch)
+        try:
+            up = int(max(1, round(100 * playback_rate)))
+            down = 100
+            factor_gcd = gcd(up, down)
+            up //= factor_gcd; down //= factor_gcd
+            chunk = scipy.signal.resample_poly(chunk, up, down)
+        except Exception:
+            # Fallback to librosa if scipy fails
+            chunk = librosa.resample(chunk, orig_sr=int(self.sr * playback_rate), target_sr=self.sr)
 
         self.current_sample_pos = end
 
@@ -646,10 +652,11 @@ class AudioRenderer:
         self.current_beat_fx = None
         self.beat_fx_channel = None  # 'A', 'B', or 'master'
 
-        # Master limiter
-        self.master_bus = pb.Pedalboard(
-            [pb.Limiter(threshold_db=-0.5, release_ms=100), pb.Gain(gain_db=0)]  # Master output gain
-        )
+        # Headroom then limiter for transparent output
+        self.master_bus = pb.Pedalboard([
+            pb.Gain(gain_db=-6),                       # give 6 dB head-room prior to mixing
+            pb.Limiter(threshold_db=-1.0, release_ms=50)  # true-peak style limiting
+        ])
 
         # Animation/automation storage
         self.fades = []

@@ -9,49 +9,54 @@ def summarize_track_data(analysis_data: Dict[str, Any]) -> Dict[str, Any]:
     """Creates a comprehensive summary of track data for the LLM prompt."""
     file_name = os.path.basename(analysis_data.get('file_path', 'N/A'))
     
-    # Extract beat grid info for precise timing
+    # Basic beat insight (trim beat grid for brevity)
     beat_grid = analysis_data.get('beat_grid_seconds', [])
     beat_info = {
-        "first_beat": beat_grid[0] if beat_grid else 0,
+        "first_beat": round(beat_grid[0], 3) if beat_grid else 0,
         "beat_count": len(beat_grid),
-        "average_beat_interval": (beat_grid[-1] - beat_grid[0]) / len(beat_grid) if len(beat_grid) > 1 else 0
+        "average_interval": round(((beat_grid[-1] - beat_grid[0]) / len(beat_grid)), 3) if len(beat_grid) > 1 else 0,
+        "preview_grid": [round(b, 3) for b in beat_grid[:32]]  # first 32 beats
     }
-    
-    # Process lyrics for creative mixing opportunities
-    lyrics = analysis_data.get('lyrics_timed', [])
-    lyrics_sections = []
-    if lyrics:
-        # Group lyrics into sections
-        current_section = []
-        last_end = 0
-        for word in lyrics:
-            if word['start'] - last_end > 2.0 and current_section:  # 2 second gap = new section
-                lyrics_sections.append({
-                    "start": current_section[0]['start'],
-                    "end": current_section[-1]['end'],
-                    "word_count": len(current_section)
-                })
-                current_section = []
-            current_section.append(word)
-            last_end = word['end']
-        if current_section:
-            lyrics_sections.append({
-                "start": current_section[0]['start'],
-                "end": current_section[-1]['end'],
-                "word_count": len(current_section)
-            })
-    
+
+    # Section summaries (label + start)
+    sections_raw = analysis_data.get('structural_analysis', [])
+    section_summaries = [
+        {
+            "label": s.get('label'),
+            "start": round(s.get('start', 0), 2)
+        } for s in sections_raw
+    ]
+
+    # Lyrics
+    lyrics_text_full = (analysis_data.get('lyrics_text') or "").strip()
+    lyrics_excerpt = lyrics_text_full[:300] + ("…" if len(lyrics_text_full) > 300 else "")
+
+    # Loudness / dynamics
+    dynamics = {
+        "loudness": analysis_data.get('spectral_features', {}).get('loudness', analysis_data.get('track', {}).get('loudness', -20)),
+        "peak_loudness": analysis_data.get('peak_loudness'),
+        "loudness_range": analysis_data.get('loudness_range')
+    }
+
     summary = {
         "track_name": file_name,
         "bpm": analysis_data.get('bpm'),
+        "tempo_confidence": analysis_data.get('track', {}).get('tempo_confidence'),
         "key_standard": analysis_data.get('key_standard'),
         "key_camelot": analysis_data.get('key_camelot'),
+        "key_confidence": analysis_data.get('track', {}).get('key_confidence'),
+        "mode": analysis_data.get('track', {}).get('mode'),
+        "time_signature": analysis_data.get('track', {}).get('time_signature'),
         "energy_normalized": analysis_data.get('energy_normalized'),
-        "structural_analysis": analysis_data.get('structural_analysis', []),
+        "dynamics": dynamics,
+        "sections": section_summaries,
         "beat_info": beat_info,
-        "lyrics_sections": lyrics_sections,
-        "total_duration": beat_grid[-1] if beat_grid else 0
+        "lyrics_excerpt": lyrics_excerpt,
+        "lyrics_available": bool(lyrics_text_full),
+        "duration": analysis_data.get('track', {}).get('duration', 0),
+        "stems_available": ["full", "vocals", "beat"],
     }
+
     return summary
 
 def generate_llm_prompt(summary_a: Dict[str, Any], summary_b: Dict[str, Any], 
@@ -90,6 +95,9 @@ def generate_llm_prompt(summary_a: Dict[str, Any], summary_b: Dict[str, Any],
 - `set_performance_mode`: Change pad mode - params: deck, mode (hot_cue/pad_fx1/pad_fx2/beat_jump/beat_loop/sampler/key_shift)
 - `key_shift`: Pitch shift - params: deck, semitones (-7 to +7)
 - `toggle_pad_fx`: Activate pad effects - params: deck, effect_id (1-32)
+
+### STEM SELECTION:
+- `set_segment`: Instantly switch the playing audio on a deck between "full", "vocals" (harmonic), or "beat" (percussive) stems. Params: deck, segment ('full'|'vocals'|'beat')
 
 ### MIXER CONTROLS:
 - `set_parameter`: Control mixer knobs/faders - params: deck, parameter, value, fade_duration

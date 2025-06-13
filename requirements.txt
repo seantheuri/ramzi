@@ -1,8 +1,7 @@
 librosa
 pydub
 soundfile
-pyacoustid
-spotipy
+
 python-dotenv
 openai
 matplotlib
@@ -10,15 +9,10 @@ scipy
 numpy
 typing-extensions
 dataclasses-json
-rich
-click
+
 # Web API dependencies
 flask
 flask-cors
 requests
+pedalboard
 # Additional dependencies for Phase 1 analysis
-msaf
-allin1
-openai-whisper
-torch
-madmom

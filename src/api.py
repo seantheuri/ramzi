@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 import threading
 import logging
+import numpy as np
 
 # Import our modules
 from analysis import analyze_song
@@ -64,16 +65,239 @@ def run_background_task(task_id: str, task_func, *args, **kwargs):
         background_tasks[task_id]['error'] = str(e)
         logger.error(f"Background task {task_id} failed: {e}")
 
-# API Routes
+# ---------- Advanced helper functions ----------
+
+def calculate_compatibility_score(track_a_data: Dict, track_b_data: Dict) -> Dict:
+    """Calculate detailed compatibility scores between two tracks"""
+    compatibility = {
+        'overall_score': 0.0,
+        'bpm_compatibility': {},
+        'key_compatibility': {},
+        'energy_compatibility': {},
+        'mode_compatibility': {},
+        'recommendations': []
+    }
+    
+    try:
+        # BPM Compatibility
+        bpm_a = float(track_a_data.get('track', {}).get('tempo', 0))
+        bpm_b = float(track_b_data.get('track', {}).get('tempo', 0))
+        
+        bpm_diff = abs(bpm_a - bpm_b)
+        bpm_ratio_diff = abs(bpm_a / bpm_b - 1.0) if bpm_b > 0 else 1.0
+        bpm_half_diff = abs(bpm_a / (bpm_b * 2) - 1.0) if bpm_b > 0 else 1.0
+        bpm_double_diff = abs((bpm_a * 2) / bpm_b - 1.0) if bpm_b > 0 else 1.0
+        
+        # Score BPM compatibility
+        if bpm_diff < 3:
+            bpm_score = 1.0
+            bpm_method = "direct"
+        elif bpm_ratio_diff < 0.06:  # Within 6%
+            bpm_score = 0.9
+            bpm_method = "tempo_adjust"
+        elif bpm_half_diff < 0.06:  # Half-time mixing
+            bpm_score = 0.8
+            bpm_method = "half_time"
+        elif bpm_double_diff < 0.06:  # Double-time mixing
+            bpm_score = 0.8
+            bpm_method = "double_time"
+        else:
+            bpm_score = max(0.0, 1.0 - (bpm_diff / 50))  # Linear decay
+            bpm_method = "difficult"
+        
+        compatibility['bpm_compatibility'] = {
+            'score': bpm_score,
+            'bpm_a': bpm_a,
+            'bpm_b': bpm_b,
+            'difference': bpm_diff,
+            'method': bpm_method,
+            'adjustment_needed': bpm_diff > 3
+        }
+        
+        # Key Compatibility (Camelot Wheel)
+        key_a = track_a_data.get('track', {}).get('key', -1)
+        key_b = track_b_data.get('track', {}).get('key', -1)
+        mode_a = track_a_data.get('track', {}).get('mode', 0)
+        mode_b = track_b_data.get('track', {}).get('mode', 0)
+        
+        key_score = 0.0
+        key_relationship = "incompatible"
+        
+        if key_a >= 0 and key_b >= 0:
+            # Same key
+            if key_a == key_b and mode_a == mode_b:
+                key_score = 1.0
+                key_relationship = "perfect_match"
+            # Same key, different mode
+            elif key_a == key_b and mode_a != mode_b:
+                key_score = 0.9
+                key_relationship = "relative"
+            # Adjacent keys
+            elif abs(key_a - key_b) in {1, 11}:
+                key_score = 0.8 if mode_a == mode_b else 0.6
+                key_relationship = "adjacent_same_mode" if mode_a == mode_b else "adjacent_different_mode"
+            # Perfect fifth
+            elif abs(key_a - key_b) in {5, 7}:
+                key_score = 0.7
+                key_relationship = "fifth_circle"
+            else:
+                harmonic_distance = min(abs(key_a - key_b), 12 - abs(key_a - key_b))
+                key_score = max(0.0, 1.0 - (harmonic_distance / 6))
+                key_relationship = "distant"
+        
+        compatibility['key_compatibility'] = {
+            'score': key_score,
+            'key_a': key_a,
+            'key_b': key_b,
+            'mode_a': mode_a,
+            'mode_b': mode_b,
+            'relationship': key_relationship,
+            'camelot_a': track_a_data.get('key_camelot', 'Unknown'),
+            'camelot_b': track_b_data.get('key_camelot', 'Unknown')
+        }
+        
+        # Energy Compatibility
+        energy_a = float(track_a_data.get('energy_normalized', 0.5))
+        energy_b = float(track_b_data.get('energy_normalized', 0.5))
+        energy_diff = abs(energy_a - energy_b)
+        energy_score = max(0.0, 1.0 - (energy_diff * 2))
+        
+        compatibility['energy_compatibility'] = {
+            'score': energy_score,
+            'energy_a': energy_a,
+            'energy_b': energy_b,
+            'difference': energy_diff,
+            'flow_direction': 'buildup' if energy_b > energy_a else 'breakdown' if energy_a > energy_b else 'maintain'
+        }
+        
+        # Mode Compatibility
+        mode_score = 1.0 if mode_a == mode_b else 0.7
+        compatibility['mode_compatibility'] = {
+            'score': mode_score,
+            'same_mode': mode_a == mode_b
+        }
+        
+        # Overall Score (weighted)
+        weights = {'bpm': 0.35, 'key': 0.35, 'energy': 0.2, 'mode': 0.1}
+        overall_score = (
+            bpm_score * weights['bpm'] +
+            key_score * weights['key'] +
+            energy_score * weights['energy'] +
+            mode_score * weights['mode']
+        )
+        compatibility['overall_score'] = overall_score
+        
+        # Recommendations
+        recommendations = []
+        if bpm_score < 0.8:
+            recommendations.append(f"Consider tempo adjustment: {bpm_a:.1f} BPM → {bpm_b:.1f} BPM")
+        if key_score < 0.6:
+            recommendations.append("Key change or harmonic mixing required")
+        if energy_diff > 0.3:
+            recommendations.append("Gradual energy transition recommended")
+        if overall_score > 0.8:
+            recommendations.append("Excellent compatibility - smooth transition expected")
+        elif overall_score > 0.6:
+            recommendations.append("Good compatibility with minor adjustments")
+        else:
+            recommendations.append("Challenging mix - consider advanced techniques")
+        compatibility['recommendations'] = recommendations
+        
+    except Exception as e:
+        logger.error(f"Error calculating compatibility: {e}")
+        compatibility['error'] = str(e)
+    
+    return compatibility
+
+
+def extract_advanced_features(analysis_data: Dict) -> Dict:
+    """Extract advanced musical features for detailed analysis"""
+    features = {}
+    try:
+        track_data = analysis_data.get('track', {})
+        # Rhythmic
+        features['rhythmic'] = {
+            'tempo': track_data.get('tempo', 0),
+            'tempo_confidence': track_data.get('tempo_confidence', 0),
+            'time_signature': track_data.get('time_signature', 4),
+            'time_signature_confidence': track_data.get('time_signature_confidence', 0),
+            'beat_count': len(analysis_data.get('beat_grid_seconds', [])),
+            'rhythmic_stability': track_data.get('tempo_confidence', 0)
+        }
+        # Harmonic
+        features['harmonic'] = {
+            'key': track_data.get('key', -1),
+            'key_confidence': track_data.get('key_confidence', 0),
+            'mode': track_data.get('mode', 0),
+            'mode_confidence': track_data.get('mode_confidence', 0),
+            'key_standard': analysis_data.get('key_standard', 'Unknown'),
+            'key_camelot': analysis_data.get('key_camelot', 'Unknown')
+        }
+        # Dynamics
+        features['dynamics'] = {
+            'loudness': track_data.get('loudness', -20),
+            'peak_loudness': analysis_data.get('peak_loudness', 0),
+            'loudness_range': analysis_data.get('loudness_range', 20),
+            'energy_normalized': float(analysis_data.get('energy_normalized', 0.5))
+        }
+        # Structure
+        sections = analysis_data.get('structural_analysis', [])
+        section_labels = [s.get('label', 'unknown') for s in sections]
+        features['structure'] = {
+            'section_count': len(sections),
+            'section_types': section_labels,
+            'has_intro': 'intro' in section_labels,
+            'has_outro': 'outro' in section_labels,
+            'has_chorus': 'chorus' in section_labels,
+            'has_breakdown': 'breakdown' in section_labels,
+            'structure_complexity': len(set(section_labels))
+        }
+        # Spectral
+        spectral = analysis_data.get('spectral_features', {})
+        if spectral:
+            features['spectral'] = {
+                'brightness': spectral.get('spectral_centroid_mean', 0),
+                'spectral_bandwidth': spectral.get('spectral_bandwidth_mean', 0),
+                'spectral_rolloff': spectral.get('spectral_rolloff_mean', 0),
+                'zero_crossing_rate': spectral.get('zero_crossing_rate_mean', 0)
+            }
+        # Timeline
+        features['timeline'] = {
+            'duration': track_data.get('duration', 0),
+            'fade_in_end': track_data.get('end_of_fade_in', 0),
+            'fade_out_start': track_data.get('start_of_fade_out', 0),
+            'effective_length': track_data.get('start_of_fade_out', 0) - track_data.get('end_of_fade_in', 0)
+        }
+    except Exception as e:
+        logger.error(f"Error extracting advanced features: {e}")
+        features['error'] = str(e)
+    return features
+
+# -------------------- Utility: ensure JSON serializable --------------------
+
+def _sanitize(obj):
+    """Recursively convert numpy scalars/arrays to native Python types for JSON."""
+    if isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    if isinstance(obj, (np.integer, np.int64)):
+        return int(obj)
+    if isinstance(obj, (np.floating, np.float64)):
+        return float(obj)
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+    if isinstance(obj, np.ndarray):
+        return [_sanitize(x) for x in obj.tolist()]
+    if isinstance(obj, np.generic):
+        return obj.item()
+    return obj
+
+# -------------------- Existing and new endpoints follow --------------------
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'message': 'RAMZI DJ API is running',
-        'version': '1.0.0'
-    })
+    return jsonify({'status': 'healthy', 'message': 'RAMZI DJ API is running', 'version': '2.0.0'})
 
 @app.route('/api/tracks', methods=['GET'])
 def list_tracks():
@@ -100,7 +324,7 @@ def list_tracks():
                     logger.error(f"Error loading analysis for {audio_file}: {e}")
                     has_analysis = False
             
-            tracks.append({
+            tracks.append(_sanitize({
                 'id': audio_file.stem,
                 'filename': audio_file.name,
                 'path': str(audio_file),
@@ -110,7 +334,7 @@ def list_tracks():
                 'bpm': analysis_data.get('bpm') if analysis_data else None,
                 'key': analysis_data.get('key_standard') if analysis_data else None,
                 'energy': analysis_data.get('energy_normalized') if analysis_data else None
-            })
+            }))
     
     return jsonify({
         'tracks': tracks,
@@ -199,7 +423,7 @@ def analyze_track(track_id):
                 background_tasks[task_id]['progress'] = 90
                 output_path = Path(app.config['ANALYSIS_FOLDER']) / f"{track_id}_analysis.json"
                 with open(output_path, 'w') as f:
-                    json.dump(result, f, indent=2)
+                    json.dump(_sanitize(result), f, indent=2)
                 
                 background_tasks[task_id]['progress'] = 100
                 background_tasks[task_id]['status'] = 'completed'
@@ -241,12 +465,12 @@ def get_track_analysis(track_id):
         # Add summary data
         summary = summarize_track_data(analysis_data)
         
-        return jsonify({
+        return jsonify(_sanitize({
             'track_id': track_id,
             'analysis_file': str(analysis_file),
             'analysis_data': analysis_data,
             'summary': summary
-        })
+        }))
         
     except Exception as e:
         logger.error(f"Error loading analysis for {track_id}: {e}")
@@ -510,9 +734,9 @@ def create_mix_simple():
             analysis_b_path = temp_path / "track_b_analysis.json"
             
             with open(analysis_a_path, 'w') as f:
-                json.dump(analysis_a, f, indent=2)
+                json.dump(_sanitize(analysis_a), f, indent=2)
             with open(analysis_b_path, 'w') as f:
-                json.dump(analysis_b, f, indent=2)
+                json.dump(_sanitize(analysis_b), f, indent=2)
             
             # Generate mix script
             logger.info("🤖 Generating AI mix script...")
@@ -541,7 +765,7 @@ def create_mix_simple():
             summary_b = summarize_track_data(analysis_b)
             
             # Prepare complete response
-            response_data = {
+            response_data = _sanitize({
                 'success': True,
                 'description': mix_script_data.get('description', 'Your AI-generated mix is ready!'),
                 'technique_highlights': mix_script_data.get('technique_highlights', []),
@@ -558,7 +782,7 @@ def create_mix_simple():
                     'analysis_duration': 'varies',
                     'ai_model_used': model
                 }
-            }
+            })
             
             logger.info(f"✅ Mix creation successful! Generated script with {len(mix_script_data.get('script', []))} commands")
             return jsonify(response_data)
@@ -648,6 +872,134 @@ def get_config():
             'audio_rendering': True
         }
     })
+
+# ---------------------------------------------------------------------------
+# Advanced analysis endpoints (re-added)
+# ---------------------------------------------------------------------------
+
+@app.route('/api/tracks/<track_id>/features', methods=['GET', 'OPTIONS'])
+def get_track_features(track_id):
+    """Return advanced musical feature extraction for a track."""
+    analysis_file = Path(app.config['ANALYSIS_FOLDER']) / f"{track_id}_analysis.json"
+    if not analysis_file.exists():
+        return jsonify({'error': 'Analysis not found'}), 404
+    try:
+        with open(analysis_file, 'r') as f:
+            analysis_data = json.load(f)
+        features = extract_advanced_features(analysis_data)
+        return jsonify({'track_id': track_id, 'features': features, 'extracted_at': time.time()})
+    except Exception as e:
+        logger.error(f"Error extracting features for {track_id}: {e}")
+        return jsonify({'error': 'Failed to extract features'}), 500
+
+@app.route('/api/tracks/<track_id>/segments', methods=['GET', 'OPTIONS'])
+def get_track_segments(track_id):
+    """Return detailed segment info (Spotify-like) for a given track."""
+    analysis_file = Path(app.config['ANALYSIS_FOLDER']) / f"{track_id}_analysis.json"
+    if not analysis_file.exists():
+        return jsonify({'error': 'Analysis not found'}), 404
+    try:
+        with open(analysis_file, 'r') as f:
+            analysis_data = json.load(f)
+        segments = analysis_data.get('segments', [])
+        stats = {
+            'total_segments': len(segments),
+            'average_duration': np.mean([s['duration'] for s in segments]) if segments else 0,
+            'confidence_stats': {
+                'mean': np.mean([s['confidence'] for s in segments]) if segments else 0,
+                'min': np.min([s['confidence'] for s in segments]) if segments else 0,
+                'max': np.max([s['confidence'] for s in segments]) if segments else 0,
+            },
+        }
+        return jsonify({'track_id': track_id, 'segments': segments, 'statistics': stats, 'meta': analysis_data.get('meta', {})})
+    except Exception as e:
+        logger.error(f"Error getting segments for {track_id}: {e}")
+        return jsonify({'error': 'Failed to get segments'}), 500
+
+@app.route('/api/tracks/<track_id>/beats', methods=['GET', 'OPTIONS'])
+def get_track_beats(track_id):
+    """Return rhythmic bars/beats/tatums for a track."""
+    analysis_file = Path(app.config['ANALYSIS_FOLDER']) / f"{track_id}_analysis.json"
+    if not analysis_file.exists():
+        return jsonify({'error': 'Analysis not found'}), 404
+    try:
+        with open(analysis_file, 'r') as f:
+            analysis_data = json.load(f)
+        bars = analysis_data.get('bars', [])
+        beats = analysis_data.get('beats', [])
+        tatums = analysis_data.get('tatums', [])
+        beat_grid = analysis_data.get('beat_grid_seconds', [])
+        track_data = analysis_data.get('track', {})
+        rhythmic_stats = {
+            'tempo': track_data.get('tempo', 0),
+            'tempo_confidence': track_data.get('tempo_confidence', 0),
+            'time_signature': track_data.get('time_signature', 4),
+            'time_signature_confidence': track_data.get('time_signature_confidence', 0),
+            'bar_count': len(bars),
+            'beat_count': len(beats),
+            'tatum_count': len(tatums),
+            'beat_grid_points': len(beat_grid),
+        }
+        return jsonify({'track_id': track_id, 'bars': bars, 'beats': beats, 'tatums': tatums, 'beat_grid_seconds': beat_grid, 'rhythmic_stats': rhythmic_stats})
+    except Exception as e:
+        logger.error(f"Error getting beats for {track_id}: {e}")
+        return jsonify({'error': 'Failed to get rhythmic data'}), 500
+
+@app.route('/api/tracks/<track_id>/sections', methods=['GET', 'OPTIONS'])
+def get_track_sections(track_id):
+    """Return structural sections for a track."""
+    analysis_file = Path(app.config['ANALYSIS_FOLDER']) / f"{track_id}_analysis.json"
+    if not analysis_file.exists():
+        return jsonify({'error': 'Analysis not found'}), 404
+    try:
+        with open(analysis_file, 'r') as f:
+            analysis_data = json.load(f)
+        structural_sections = analysis_data.get('structural_analysis', [])
+        detailed_sections = analysis_data.get('sections', [])
+        enhanced_sections = []
+        for section in structural_sections:
+            match = next((d for d in detailed_sections if abs(d.get('start', 0) - section.get('start', 0)) < 1.0), None)
+            enhanced_sections.append({**section, 'detailed_analysis': match, 'has_detailed_data': bool(match)})
+        stats = {
+            'total_sections': len(enhanced_sections),
+            'section_types': list({s.get('label','unknown') for s in enhanced_sections}),
+            'average_duration': np.mean([s.get('end',0)-s.get('start',0) for s in enhanced_sections]) if enhanced_sections else 0,
+        }
+        return jsonify({'track_id': track_id, 'sections': enhanced_sections, 'statistics': stats, 'detailed_sections_available': len(detailed_sections)>0})
+    except Exception as e:
+        logger.error(f"Error getting sections for {track_id}: {e}")
+        return jsonify({'error': 'Failed to get sections'}), 500
+
+@app.route('/api/tracks/compare', methods=['POST', 'OPTIONS'])
+def compare_tracks():
+    """Compare two tracks for compatibility."""
+    data = request.json or {}
+    track_a_id = data.get('track_a_id')
+    track_b_id = data.get('track_b_id')
+    if not track_a_id or not track_b_id:
+        return jsonify({'error': 'Both track_a_id and track_b_id are required'}), 400
+    analysis_folder = Path(app.config['ANALYSIS_FOLDER'])
+    file_a = analysis_folder / f"{track_a_id}_analysis.json"
+    file_b = analysis_folder / f"{track_b_id}_analysis.json"
+    if not file_a.exists() or not file_b.exists():
+        return jsonify({'error': 'Analysis not found for one or both tracks'}), 404
+    try:
+        with open(file_a, 'r') as f: analysis_a = json.load(f)
+        with open(file_b, 'r') as f: analysis_b = json.load(f)
+        compatibility = calculate_compatibility_score(analysis_a, analysis_b)
+        features_a = extract_advanced_features(analysis_a)
+        features_b = extract_advanced_features(analysis_b)
+        return jsonify(_sanitize({
+            'track_a_id': track_a_id,
+            'track_b_id': track_b_id,
+            'compatibility': compatibility,
+            'track_a_features': features_a,
+            'track_b_features': features_b,
+            'compared_at': time.time()
+        }))
+    except Exception as e:
+        logger.error(f"Error comparing tracks: {e}")
+        return jsonify({'error': 'Failed to compare tracks'}), 500
 
 # Error handlers
 @app.errorhandler(413)

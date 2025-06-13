@@ -258,11 +258,14 @@ class Deck:
         # Performance modes
         self.performance_mode = "hot_cue"  # hot_cue, pad_fx1, pad_fx2, beat_jump, beat_loop, sampler, key_shift, keyboard
         self.key_shift = 0  # Semitones
-        # playback segment: 'full', 'vocals', or 'beat'
+        # playback segment: 'full', 'vocals', 'beat', or 'instrumental'
         self.segment_type = 'full'
 
-    def _split_with_lalal(self, audio_file_path, stem="drum"):
-        """Attempt remote stem separation via LALAL.ai. Returns (harmonic/back, percussive/stem) arrays or None on failure."""
+        # Additional stem buffer (vocals only)
+        self.y_vocals = None
+
+    def _split_with_lalal(self, audio_file_path, stems=("vocals", "drum")):
+        """Download selected stems via LALAL.ai. Returns dict{'back':y_back,'vocals':y_voc,'drum':y_drum}. None on failure."""
         api_key = os.environ.get("LALAL_API_KEY")
         if not api_key:
             return None
@@ -283,37 +286,42 @@ class Deck:
 
             file_id = up_json["id"]
 
-            # Start split task
-            split_params = json.dumps([{"id": file_id, "stem": stem}])
-            split_headers = {"Authorization": f"license {api_key}"}
-            s_resp = requests.post("https://www.lalal.ai/api/split/", data={"params": split_params}, headers=split_headers, timeout=30)
-            s_resp.raise_for_status()
+            # Sequentially request each desired stem
+            results = {"back": None}
 
-            # Poll for completion
-            for _ in range(120):  # up to ~10 min (120*5s)
-                time.sleep(5)
-                c_resp = requests.post("https://www.lalal.ai/api/check/", data={"id": file_id}, headers=split_headers, timeout=15)
-                c_resp.raise_for_status()
-                c_json = c_resp.json()
-                result = c_json.get("result", {}).get(file_id, {})
-                task = result.get("task") or {}
-                state = task.get("state") or result.get("status")
-                if state == "success" and result.get("split"):
-                    split_info = result["split"]
-                    stem_url = split_info.get("stem_track")
-                    back_url = split_info.get("back_track")
-                    if not stem_url or not back_url:
+            split_headers = {"Authorization": f"license {api_key}"}
+
+            for stem in stems:
+                # Trigger split
+                split_params = json.dumps([{"id": file_id, "stem": stem}])
+                s_resp = requests.post("https://www.lalal.ai/api/split/", data={"params": split_params}, headers=split_headers, timeout=30)
+                s_resp.raise_for_status()
+
+                # Poll until done
+                success = False
+                for _ in range(120):  # 10 min max
+                    time.sleep(5)
+                    c_resp = requests.post("https://www.lalal.ai/api/check/", data={"id": file_id}, headers=split_headers, timeout=15)
+                    c_resp.raise_for_status()
+                    res = c_resp.json().get("result", {}).get(file_id, {})
+                    if res.get("status") == "error":
+                        print(f"    LALAL split error ({stem}): {res.get('error')}")
                         break
-                    # download
-                    y_perc = self._download_audio(stem_url)
-                    y_back = self._download_audio(back_url)
-                    if y_perc is not None and y_back is not None:
-                        return y_back, y_perc  # harmonic/back first
-                    break
-                elif state == "error":
-                    print(f"    LALAL split error: {result.get('error')}")
-                    return None
-            print("    LALAL split timed out")
+                    if res.get("split") and res.get("stem") == stem:
+                        split_info = res["split"]
+                        stem_url = split_info.get("stem_track")
+                        back_url = split_info.get("back_track")
+                        if stem_url:
+                            results[stem] = self._download_audio(stem_url)
+                        if back_url and results.get("back") is None:
+                            results["back"] = self._download_audio(back_url)
+                        success = True
+                        break
+                if not success:
+                    print(f"    LALAL split for stem '{stem}' timed out or failed")
+
+            return results if any(v is not None for v in results.values()) else None
+
         except Exception as e:
             print(f"    LALAL split failed: {e}")
         return None
@@ -353,9 +361,11 @@ class Deck:
             self.y = y_original
 
         # --- Source separation ---
-        remote_stems = self._split_with_lalal(audio_file_path)
-        if remote_stems:
-            self.y_harmonic, self.y_percussive = remote_stems
+        remote = self._split_with_lalal(audio_file_path)
+        if remote:
+            self.y_harmonic = remote.get("back") or y_original
+            self.y_percussive = remote.get("drum") or remote.get("beat")
+            self.y_vocals = remote.get("vocals")
             print("  ✓ Stems obtained via LALAL.ai")
         else:
             # Fallback to HPSS if remote split unavailable
@@ -468,7 +478,9 @@ class Deck:
         source_full = self.y if self.y is not None else np.array([])
         if self.segment_type == 'beat' and self.y_percussive is not None:
             source = self.y_percussive
-        elif self.segment_type == 'vocals' and self.y_harmonic is not None:
+        elif self.segment_type == 'vocals' and self.y_vocals is not None:
+            source = self.y_vocals
+        elif self.segment_type in ['instrumental', 'back'] and self.y_harmonic is not None:
             source = self.y_harmonic
         else:
             source = source_full
@@ -539,11 +551,11 @@ class Deck:
 
     # ---------------- Segment control -----------------
     def set_segment(self, segment):
-        """Select which audio stem to play: 'full', 'vocals', or 'beat'"""
-        if segment in ['full', 'vocals', 'beat']:
+        """Select which audio stem to play: 'full', 'vocals', 'beat', or 'instrumental'"""
+        if segment in ['full', 'vocals', 'beat', 'instrumental', 'back']:
             self.segment_type = segment
         else:
-            raise ValueError("segment must be 'full', 'vocals', or 'beat'")
+            raise ValueError("segment must be 'full', 'vocals', 'beat', 'instrumental', or 'back'")
 
 
 # --- Mixer Class ---

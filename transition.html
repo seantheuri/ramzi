@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Transition - RAMZI DJ Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">🔄 AI Mix Transitions</h1>
+        <a href="index.html" class="nav-back">← Back to Home</a>
+    </header>
+
+    <div class="main-container">
+        <div class="section">
+            <h2>Upload Tracks for Transition</h2>
+            
+            <div class="upload-container dual">
+                <div class="upload-box">
+                    <h3>Outgoing Track (Deck A)</h3>
+                    <label class="upload-area" for="transitionTrackA">
+                        <span class="upload-icon">📁</span>
+                        <span class="upload-text">Drop outgoing track</span>
+                    </label>
+                    <input type="file" id="transitionTrackA" class="file-input" accept="audio/*">
+                    <div class="file-info" id="trackAFileInfo">
+                        <p><strong>File:</strong> <span class="filename"></span></p>
+                        <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    </div>
+                </div>
+                
+                <div class="upload-box">
+                    <h3>Incoming Track (Deck B)</h3>
+                    <label class="upload-area" for="transitionTrackB">
+                        <span class="upload-icon">📁</span>
+                        <span class="upload-text">Drop incoming track</span>
+                    </label>
+                    <input type="file" id="transitionTrackB" class="file-input" accept="audio/*">
+                    <div class="file-info" id="trackBFileInfo">
+                        <p><strong>File:</strong> <span class="filename"></span></p>
+                        <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-section">
+                <h3>Transition Instructions</h3>
+                <textarea id="transitionPrompt" class="prompt-input" 
+                    placeholder="Describe your desired transition style... (e.g., 'smooth 32-bar blend with filter sweeps' or 'quick cut with echo effect')"></textarea>
+                
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="setPreset('smooth')">Smooth Blend</button>
+                    <button class="preset-btn" onclick="setPreset('cut')">Quick Cut</button>
+                    <button class="preset-btn" onclick="setPreset('creative')">Creative Mix</button>
+                    <button class="preset-btn" onclick="setPreset('harmonic')">Harmonic Mix</button>
+                    <button class="preset-btn" onclick="setPreset('buildup')">Buildup & Drop</button>
+                    <button class="preset-btn" onclick="setPreset('mashup')">Mashup Style</button>
+                </div>
+            </div>
+
+            <div class="center-btn">
+                <button class="btn btn-primary" id="createTransitionBtn" disabled onclick="createTransition()">
+                    🎛️ Create Transition
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <h3>Creating Your Mix...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="status-text" id="statusText">Analyzing tracks...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="transitionResults" style="display: none;">
+            <div class="section">
+                <h2>Mix Results</h2>
+                
+                <div id="mixDescription" style="background: var(--bg-primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; font-style: italic; text-align: center;"></div>
+                
+                <div class="waveform-container" style="position: relative;">
+                    <canvas id="transitionWaveform" class="waveform-canvas"></canvas>
+                    <div id="transitionPlayhead" class="playhead" style="left: 0;"></div>
+                    <div id="markersContainer"></div>
+                </div>
+
+                <div class="audio-player">
+                    <h3>🎵 Preview Your Mix</h3>
+                    <audio id="transitionAudio" controls></audio>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="downloadMix()">💾 Download Mix</button>
+                    <button class="btn" onclick="downloadScript()">📄 Download Script</button>
+                    <button class="btn" onclick="resetTransition()">🔄 Create Another</button>
+                </div>
+            </div>
+
+            <!-- Track Analysis Info -->
+            <div class="section">
+                <h2>Track Analysis</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>Track A Properties</h3>
+                        <div class="track-info" id="trackAAnalysis"></div>
+                    </div>
+                    <div>
+                        <h3>Track B Properties</h3>
+                        <div class="track-info" id="trackBAnalysis"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transition Techniques -->
+            <div class="section">
+                <h2>Techniques Used</h2>
+                <div id="techniquesList" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="error-message message" id="errorMessage"></div>
+        <div class="success-message message" id="successMessage"></div>
+    </div>
+
+    <script src="transition.js"></script>
+</body>
+</html>

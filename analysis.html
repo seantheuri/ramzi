@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Analysis - RAMZI DJ Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">🎵 Audio Analysis</h1>
+        <a href="index.html" class="nav-back">← Back to Home</a>
+    </header>
+
+    <div class="main-container">
+        <div class="section">
+            <h2>Select Analysis Mode</h2>
+            
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="setAnalysisMode('single')">Single Track</button>
+                <button class="mode-btn" onclick="setAnalysisMode('compare')">Compare Tracks</button>
+            </div>
+
+            <!-- Single Track Upload -->
+            <div id="singleTrackMode" class="upload-container single">
+                <div class="upload-box">
+                    <label class="upload-area" for="singleTrackInput">
+                        <span class="upload-icon">📁</span>
+                        <span class="upload-text">Drop audio file or click to browse</span>
+                    </label>
+                    <input type="file" id="singleTrackInput" class="file-input" accept="audio/*">
+                    <div class="file-info" id="singleFileInfo">
+                        <p><strong>File:</strong> <span class="filename"></span></p>
+                        <p><strong>Size:</strong> <span class="filesize"></span></p>
+                        <p><strong>Type:</strong> <span class="filetype"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare Tracks Upload -->
+            <div id="compareTracksMode" class="upload-container dual" style="display: none;">
+                <div class="upload-box">
+                    <h3>Track A</h3>
+                    <label class="upload-area" for="compareTrackA">
+                        <span class="upload-icon">📁</span>
+                        <span class="upload-text">Drop Track A</span>
+                    </label>
+                    <input type="file" id="compareTrackA" class="file-input" accept="audio/*">
+                    <div class="file-info" id="trackAInfo">
+                        <p><strong>File:</strong> <span class="filename"></span></p>
+                        <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    </div>
+                </div>
+                
+                <div class="upload-box">
+                    <h3>Track B</h3>
+                    <label class="upload-area" for="compareTrackB">
+                        <span class="upload-icon">📁</span>
+                        <span class="upload-text">Drop Track B</span>
+                    </label>
+                    <input type="file" id="compareTrackB" class="file-input" accept="audio/*">
+                    <div class="file-info" id="trackBInfo">
+                        <p><strong>File:</strong> <span class="filename"></span></p>
+                        <p><strong>Size:</strong> <span class="filesize"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-btn">
+                <button class="btn btn-primary" id="analyzeBtn" disabled onclick="startAnalysis()">
+                    🔍 Analyze
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <h3>Analyzing Audio...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="status-text" id="statusText">Extracting audio features...</p>
+        </div>
+
+        <!-- Single Track Results -->
+        <div id="singleTrackResults" style="display: none;">
+            <div class="section">
+                <h2>Analysis Results</h2>
+                
+                <div class="waveform-container">
+                    <canvas id="analysisWaveform" class="waveform-canvas"></canvas>
+                    <div id="analysisPlayhead" class="playhead" style="left: 0;"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn" id="playBtn" onclick="togglePlayback()">▶️ Play</button>
+                    <button class="btn" onclick="stopPlayback()">⏹️ Stop</button>
+                    <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+                </div>
+
+                <h3>Track Properties</h3>
+                <div class="track-info" id="trackInfo"></div>
+
+                <h3>Song Structure</h3>
+                <div class="segments-grid" id="segmentsGrid"></div>
+            </div>
+        </div>
+
+        <!-- Compare Results -->
+        <div id="compareResults" style="display: none;">
+            <div class="section">
+                <h2>Track A Analysis</h2>
+                <div class="waveform-container">
+                    <canvas id="waveformA" class="waveform-canvas"></canvas>
+                    <div id="playheadA" class="playhead" style="left: 0;"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="togglePlaybackTrack('A')">▶️ Play</button>
+                    <button class="btn" onclick="stopPlaybackTrack('A')">⏹️ Stop</button>
+                </div>
+                <div class="track-info" id="trackInfoA"></div>
+            </div>
+
+            <div class="section">
+                <h2>Track B Analysis</h2>
+                <div class="waveform-container">
+                    <canvas id="waveformB" class="waveform-canvas"></canvas>
+                    <div id="playheadB" class="playhead" style="left: 0;"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="togglePlaybackTrack('B')">▶️ Play</button>
+                    <button class="btn" onclick="stopPlaybackTrack('B')">⏹️ Stop</button>
+                </div>
+                <div class="track-info" id="trackInfoB"></div>
+            </div>
+
+            <div class="section">
+                <h2>Compatibility Analysis</h2>
+                <div class="track-info" id="compatibilityInfo"></div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="error-message message" id="errorMessage"></div>
+        <div class="success-message message" id="successMessage"></div>
+    </div>
+
+    <script src="analysis.js"></script>
+</body>
+</html>

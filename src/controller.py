@@ -323,6 +323,11 @@ class Deck:
             r = requests.get(url, timeout=60)
             r.raise_for_status()
             data = io.BytesIO(r.content)
+            # Save audio to local file
+            os.makedirs("downloads", exist_ok=True)
+            filename = os.path.join("downloads", f"audio_{int(time.time())}.mp3")
+            with open(filename, "wb") as f:
+                f.write(data.getvalue())
             y, sr_file = librosa.load(data, sr=self.sr)
             return y
         except Exception as e:

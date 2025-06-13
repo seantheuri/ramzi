@@ -4475,7 +4475,7 @@
       "tempo": 86.1328125,
       "tempo_confidence": 0.7,
       "key": 2,
-      "key_confidence": 0.7021408571071972,
+      "key_confidence": 0.7021406097679844,
       "mode": 1,
       "mode_confidence": 0.7,
       "time_signature": 4,
@@ -4489,7 +4489,7 @@
       "tempo": 172.265625,
       "tempo_confidence": 0.7,
       "key": 2,
-      "key_confidence": 0.7833982573426347,
+      "key_confidence": 0.7833982237610442,
       "mode": 0,
       "mode_confidence": 0.7,
       "time_signature": 4,
@@ -20936,7 +20936,7 @@
       ]
     }
   ],
-  "file_path": "songs/greece.mp3",
+  "file_path": "/Users/karim/Desktop/Projects/ramzi/uploads/track_b_greece.mp3",
   "bpm": "86.13",
   "key_standard": "D Minor",
   "key_camelot": "7A",

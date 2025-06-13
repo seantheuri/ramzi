@@ -1,0 +1,149 @@
+{
+  "description": "This mix showcases a seamless transition from Song A to Song B by isolating the vocals of Song B over the beat of Song A, followed by a smooth blend using harmonic mixing and creative effects.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Vocal Isolation",
+    "EQ and Filter Transitions",
+    "Beat Sync",
+    "Creative Effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/just_wanna_rock_analysis.json",
+        "target_bpm": 152.0
+      }
+    },
+    {
+      "time": 1.5,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 3.0,
+      "command": "eq_low",
+      "params": {
+        "deck": "A",
+        "value": 0.7,
+        "fade_duration": 8.0
+      }
+    },
+    {
+      "time": 3.0,
+      "command": "eq_mid",
+      "params": {
+        "deck": "A",
+        "value": 0.7,
+        "fade_duration": 8.0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 12.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.3,
+        "fade_duration": 16.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 28.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 41.0,
+      "command": "beat_fx_on",
+      "params": {}
+    },
+    {
+      "time": 50.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.8,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    }
+  ]
+}

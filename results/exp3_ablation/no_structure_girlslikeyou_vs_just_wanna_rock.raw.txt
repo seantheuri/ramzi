@@ -1,0 +1,160 @@
+{
+  "description": "The transition from 'Girls Like You' to 'Just Wanna Rock' employs harmonic mixing, beat syncing, and creative use of looping and pad effects to ensure a seamless and dynamic blend. The mix starts with aligning the beats and gradually introduces 'Just Wanna Rock' while utilizing EQ and filtering to create a smooth frequency transition.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Beat syncing",
+    "EQ and filter transitions",
+    "Creative looping",
+    "Pad effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "girlslikeyou.mp3",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "just_wanna_rock.mp3",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 161.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 161.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 161.5,
+      "command": "auto_loop",
+      "params": {
+        "deck": "B",
+        "beats": 4
+      }
+    },
+    {
+      "time": 165.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 169.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 169.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 173.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "A",
+        "fx_type": "filter",
+        "params": {
+          "frequency": 200
+        }
+      }
+    },
+    {
+      "time": 175.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "filter",
+        "params": {
+          "frequency": 200
+        }
+      }
+    },
+    {
+      "time": 177.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 5
+      }
+    },
+    {
+      "time": 180.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 182.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 182.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 182.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 2.0
+      }
+    }
+  ]
+}

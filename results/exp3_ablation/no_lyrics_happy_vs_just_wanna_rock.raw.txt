@@ -1,0 +1,189 @@
+{
+  "description": "This mix transition utilizes harmonic mixing, beatmatching, and a creative use of effects and EQ to smoothly blend the two tracks over a long transition, enhancing the energy and dynamics.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beatmatching",
+    "EQ Transitioning",
+    "Pad FX Use",
+    "Looping"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "happy.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "just_wanna_rock.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 7.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 7.5,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 33.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "B",
+        "beats": 4
+      }
+    },
+    {
+      "time": 36.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "filter",
+        "params": {
+          "cutoff": 1500
+        }
+      }
+    },
+    {
+      "time": 59.5,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 79.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 84.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "A",
+        "beats": 8
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 4
+      }
+    },
+    {
+      "time": 87.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": false,
+        "beats": 4
+      }
+    },
+    {
+      "time": 89.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 89.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": -0.06
+      }
+    },
+    {
+      "time": 89.5,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 5
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.6,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 92.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.4,
+        "fade_duration": 2.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "This mix uses a harmonic blend by syncing both tracks at 128 BPM and leveraging creative effects such as beat echo, auto loops, and pad FX to smoothly transition from Song A to Song B. The extended overlap allows both tracks to coexist, highlighting key moments with hot cue jumps and EQ/fader adjustments for a seamless energy flow.",
+  "technique_highlights": [
+    "BPM adjustment and beat matching",
+    "Hot cue setting and jumping for creative phrase repetition",
+    "Use of auto loop, beat FX (echo), and pad FX for dynamic texture"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.

@@ -1,0 +1,165 @@
+{
+  "description": "This mix creatively transitions between 'family_ties.mp3' and 'greece.mp3' using harmonic mixing and energy management. A long, smooth blend is achieved with synced BPMs, EQ modulation, and effects for a seamless experience.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot wheel",
+    "Beat matching and phrase alignment",
+    "Creative use of loops and effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "family_ties.mp3",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "greece.mp3",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 103.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 145.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 150.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 155.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "filter",
+        "params": {
+          "cutoff_hz": 200
+        }
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 8
+      }
+    },
+    {
+      "time": 170.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 175.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 175.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 180.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 240.0,
+      "command": "stop",
+      "params": {
+        "deck": "B"
+      }
+    }
+  ]
+}

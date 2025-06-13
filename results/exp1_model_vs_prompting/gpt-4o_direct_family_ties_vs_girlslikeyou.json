@@ -1,0 +1,165 @@
+{
+  "description": "This mix transitions from Song A to Song B using harmonic mixing, tempo adjustment, and creative use of stems and effects. The blend involves a smooth crossfade and an engaging vocal stem overlay, showcasing both tracks effectively.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Tempo Adjustment",
+    "Vocal Stem Overlay",
+    "Crossfade",
+    "Beat Sync"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/girlslikeyou_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 15.5,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 60.28,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 60.78,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 60.8,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 61.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 62.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 62.5,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 72.5,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 73.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 73.5,
+      "command": "beat_fx_on",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 74.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 80.5,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": -0.05
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": 0.0
+      }
+    }
+  ]
+}

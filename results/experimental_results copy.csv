@@ -1,0 +1,31 @@
+experiment_name,model_name,prompting_style,track_pair,is_valid,command_count,technique_highlights,transition_length_beats,mix_out_label,mix_in_label,harmonic_score,key_shift_count,bpm_change_a_percent,bpm_change_b_percent
+exp1_model_vs_prompting,o3-mini,direct,greece_vs_just_wanna_rock,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,greece_vs_just_wanna_rock,True,18,"harmonic mixing,beat sync,EQ adjustments,looping,smart fader",58.86,chorus,verse,0.0,0.0,48.61,15.79
+exp1_model_vs_prompting,gpt-4o,cot,greece_vs_just_wanna_rock,True,29,"BPM adjustment,Harmonic mixing,Looping,EQ transitions,Hot cues,Pad FX",84.69,breakdown,verse,0.0,0.0,48.61,15.79
+exp1_model_vs_prompting,o3-mini,direct,family_ties_vs_greece,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,family_ties_vs_greece,True,22,"Harmonic mixing,Phrase alignment,Beat matching,Creative use of loops,Reverb and echo effects",,,breakdown,0.0,0.0,3.4,48.61
+exp1_model_vs_prompting,gpt-4o,cot,family_ties_vs_greece,True,21,"Harmonic Mixing,Tempo Sync,Key Shift,EQ Adjustment,Low-pass Filter,Reverb Effect",86.13,breakdown,breakdown,0.0,1.0,3.4,48.61
+exp1_model_vs_prompting,o3-mini,direct,family_ties_vs_girlslikeyou,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,family_ties_vs_girlslikeyou,True,27,"Harmonic Mixing,Tempo Adjustment,Looping,EQ Transition,Beat FX,Hot Cues",242.94,verse,verse,2.0,0.0,3.4,1.55
+exp1_model_vs_prompting,gpt-4o,cot,family_ties_vs_girlslikeyou,True,21,"Harmonic mixing,Extended looping,EQ adjustments,Beat effects,Crossfader control",,breakdown,verse,2.0,0.0,3.4,1.55
+exp1_model_vs_prompting,o3-mini,direct,greece_vs_popstar,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,greece_vs_popstar,True,23,"Harmonic Mixing,EQ Transition,Looping and Hot Cues,Creative Beat FX",57.42,chorus,breakdown,1.0,0.0,0.0,0.0
+exp1_model_vs_prompting,gpt-4o,cot,greece_vs_popstar,True,24,"Harmonic mixing using Camelot wheel,Creative use of smart fader and looping,Beat FX for smooth transitions",57.42,chorus,breakdown,1.0,0.0,49.77,20.12
+exp1_model_vs_prompting,o3-mini,direct,family_ties_vs_popstar,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,family_ties_vs_popstar,True,15,"Harmonic mixing,Beat sync and phrase alignment,EQ blending,Creative loop usage,FX application",154.59,verse,breakdown,0.0,0.0,0.01,17.96
+exp1_model_vs_prompting,gpt-4o,cot,family_ties_vs_popstar,True,25,"Harmonic Mixing,Beat Sync,EQ Transition,Looping,Beat FX",258.39,verse,breakdown,0.0,0.0,0.01,17.96
+exp1_model_vs_prompting,o3-mini,direct,family_ties_vs_just_wanna_rock,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,family_ties_vs_just_wanna_rock,True,22,"Harmonic Mixing,Beat Matching,EQ Adjustments,Key Shifting,Creative Effects",165.64,breakdown,verse,0.0,1.0,0.0,12.82
+exp1_model_vs_prompting,gpt-4o,cot,family_ties_vs_just_wanna_rock,True,24,"harmonic_mixing,looping,beat_sync,EQ_adjustment,pad_effects",66.25,chorus,verse,0.0,0.0,0.0,0.0
+exp1_model_vs_prompting,o3-mini,direct,greece_vs_happy,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,greece_vs_happy,True,26,"Harmonic mixing using Camelot keys,Tempo adjustment and beat syncing,Creative use of loops and hot cues,EQ blending for smooth transitions,Applying pad FX for enhancing dynamics",78.95,breakdown,breakdown,0.0,0.0,0.0,46.67
+exp1_model_vs_prompting,gpt-4o,cot,greece_vs_happy,True,22,"harmonic mixing,looping,EQ transitions,pad FX,beat matching",60.29,chorus,chorus,0.0,0.0,0.0,0.0
+exp1_model_vs_prompting,o3-mini,direct,family_ties_vs_happy,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,family_ties_vs_happy,True,19,"Harmonic mixing,Beat matching,EQ transitions,Echo effect,Filter sweeps,Looping",,verse,breakdown,0.0,0.0,0.0,17.95
+exp1_model_vs_prompting,gpt-4o,cot,family_ties_vs_happy,True,25,"Harmonic Mixing,Looping,EQ Adjustments,Beat FX",,verse,breakdown,0.0,0.0,0.0,17.95
+exp1_model_vs_prompting,o3-mini,direct,girlslikeyou_vs_greece,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,girlslikeyou_vs_greece,True,16,"Harmonic mixing,Tempo adjustment,EQ transition,Looping,Beat FX application",96.64,verse,breakdown,0.0,0.0,1.55,48.61
+exp1_model_vs_prompting,gpt-4o,cot,girlslikeyou_vs_greece,True,26,"harmonic_mixing,BPM_transition,EQ_isolation,looping,pad_FX",105.04,verse,breakdown,0.0,0.0,1.55,48.61
+exp1_model_vs_prompting,o3-mini,direct,happy_vs_just_wanna_rock,False,0,,,,,,,,
+exp1_model_vs_prompting,gpt-4o,direct,happy_vs_just_wanna_rock,True,22,"Harmonic mixing,EQ adjustments,Loop extension,Pad FX usage,Beat matching,Phrase alignment",236.87,chorus,verse,1.0,0.0,0.0,6.25
+exp1_model_vs_prompting,gpt-4o,cot,happy_vs_just_wanna_rock,True,22,"Beat Sync,EQ Adjustments,Filter FX,Hot Cues,Looping,Crossfading",107.67,verse,verse,1.0,0.0,0.0,6.25

@@ -1,0 +1,164 @@
+{
+  "description": "This mix creatively transitions from Song A to Song B using harmonic mixing, EQ techniques, and synchronized beat effects, culminating in a smooth blend with a memorable bass swap.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "EQ Bass Swap",
+    "Beat Sync",
+    "Hot Cues"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/just_wanna_rock_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 2.5,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "seek_to_time",
+      "params": {
+        "deck": "A",
+        "time_in_seconds": 125.96
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 32.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 33.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 34.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 36.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.5,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 41.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 64.0,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 64.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "channel_fader",
+        "value": 1.0,
+        "fade_duration": 2.0
+      }
+    }
+  ]
+}

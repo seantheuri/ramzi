@@ -1,0 +1,149 @@
+{
+  "description": "This mix transition creatively blends 'happy.mp3' into 'track_b_popstar.mp3' using harmonic mixing, smooth EQ transitions, and synchronized beat matching. A key shift creates a brief harmonic shift, and the mix features a memorable acapella moment using the 'vocals' stem.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "EQ Transitions",
+    "Beat Matching",
+    "Key Shifting",
+    "Stem Mixing"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_happy_vs_popstar_full_data.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_happy_vs_popstar_full_data.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 60.5,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 61.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 61.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "key_shift"
+      }
+    },
+    {
+      "time": 70.5,
+      "command": "key_shift",
+      "params": {
+        "deck": "B",
+        "semitones": -1
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 95.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.5,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 95.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.5,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "description": "This mix uses harmonic mixing between 'family_ties' in A Minor (8A) and 'happy' in F Minor (4A), leveraging a smooth blend facilitated by beat matching, EQ adjustments, and creative use of effects such as echo and filter. The transition is extended to allow both tracks to play harmoniously together, enhancing the energy flow.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Beat matching",
+    "EQ transitions",
+    "Echo effect",
+    "Filter sweeps",
+    "Looping"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "family_ties.mp3",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 143.5,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "happy.mp3",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 143.5,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 143.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 144.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 144.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 145.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 146.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 146.0,
+      "command": "beat_fx_on",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 147.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 147.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_mid",
+        "value": 0.4,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 147.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.7,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 150.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 8.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 158.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "filter",
+        "params": {
+          "cutoff_hz": 200
+        }
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 164.0,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 166.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 166.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "none",
+        "params": {}
+      }
+    }
+  ]
+}

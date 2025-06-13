@@ -1,0 +1,161 @@
+{
+  "description": "This mix transitions from 'greece.mp3' to 'just_wanna_rock.mp3' with smooth harmonic blending, utilizing the Camelot compatibility of 6A to 3A. The transition features clever use of beat syncing, EQ adjustments, and pad effects to create a memorable and professional blend.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beat Syncing",
+    "EQ Transitioning",
+    "Pad FX Usage",
+    "Creative Loops"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "greece.mp3",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "just_wanna_rock.mp3",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 3.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 46.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 3
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": 0.5
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 91.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 92.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    }
+  ]
+}

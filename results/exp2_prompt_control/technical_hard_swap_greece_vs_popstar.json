@@ -1,0 +1,134 @@
+{
+  "description": "This mix features a hard swap transition between two tracks using creative EQ techniques, stem manipulation, and beat effects for a memorable blend. The mix leverages harmonic mixing and phrase alignment for a smooth and energetic transition.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Stem manipulation",
+    "Beat FX",
+    "EQ transition",
+    "Phrase alignment"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/popstar_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 99.42,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 99.42,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 100.42,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 100.42,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 100.42,
+      "command": "beat_fx_on",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 104.42,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 0.5
+      }
+    },
+    {
+      "time": 104.92,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 0.5
+      }
+    },
+    {
+      "time": 106.42,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 107.42,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "A"
+      }
+    },
+    {
+      "time": 107.42,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 109.42,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

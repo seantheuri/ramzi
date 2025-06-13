@@ -1,0 +1,20 @@
+{
+  "description": "This mix uses harmonic beat matching and smooth EQ transitions to blend 'family_ties.mp3' with 'greece.mp3'. By creatively employing auto loops, hot cues, pad FX, and beat FX while gradually crossfading, the mix maintains a steady energy and an extended, memorable blend.",
+  "technique_highlights": [
+    "Beat Sync and BPM Adjustment",
+    "Auto Looping and Hot Cue Setup",
+    "Pad FX and Beat FX for creative transitions",
+    "Smooth Crossfader and EQ transitions",
+    "Sampler Triggering for accent effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "family_ties.mp3", "target_bpm": 128}},
+    {"time": 0.1, "command": "play", "params": {"deck": "A"}},
+    {"time": 15.0, "command": "cue_set", "params": {"deck": "A"}},
+    {"time": 30.0, "command": "auto_loop", "params": {"deck": "A", "beats": 8}},
+    {"time": 40.0, "command": "loop_exit", "params": {"deck": "A"}},
+    {"time": 60.0, "command": "load_track", "params": {"deck": "B", "file_path": "greece.mp3", "target_bpm": 128}},
+    {"time": 60.1, "command": "cue_set", "params": {"deck": "B"}},
+    {"time": 62.0, "command": "cue_play", "params": {"deck": "B"}},
+    {"time": 65.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "volume", "value": 0

@@ -1,0 +1,28 @@
+{
+  "description": "The transition will utilize harmonic mixing and energy matching by leveraging the shared key of A Minor. We'll use loops, EQ adjustments, and beat effects to create a long, smooth blend that highlights both tracks. The transition will start with an extended loop and crossfader manipulation for a seamless mix.",
+  "technique_highlights": ["Harmonic mixing", "Extended looping", "EQ adjustments", "Beat effects", "Crossfader control"],
+  "total_duration": 240.0,
+  "script": [
+    {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "family_ties.mp3", "target_bpm": 128}},
+    {"time": 0.5, "command": "play", "params": {"deck": "A"}},
+    {"time": 1.0, "command": "set_master_deck", "params": {"deck": "A"}},
+    {"time": 5.0, "command": "load_track", "params": {"deck": "B", "file_path": "girlslikeyou.mp3", "target_bpm": 128}},
+    {"time": 6.0, "command": "set_hot_cue", "params": {"deck": "B", "cue_idx": 0}},
+    {"time": 7.0, "command": "play", "params": {"deck": "B"}},
+    {"time": 8.0, "command": "beat_sync", "params": {"deck": "B"}},
+    {"time": 10.0, "command": "auto_loop", "params": {"deck": "A", "beats": 16}},
+    {"time": 20.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_low", "value": 0.2, "fade_duration": 8}},
+    {"time": 20.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_low", "value": 0.2, "fade_duration": 8}},
+    {"time": 28.0, "command": "set_crossfader", "params": {"position": 0.5, "fade_duration": 8, "curve": "smooth"}},
+    {"time": 36.0, "command": "set_beat_fx", "params": {"fx_type": "echo", "channel": "B", "beats": 4, "depth": 0.5}},
+    {"time": 36.0, "command": "beat_fx_on", "params": {}},
+    {"time": 40.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_high", "value": 0.0, "fade_duration": 4}},
+    {"time": 40.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_high", "value": 0.8, "fade_duration": 4}},
+    {"time": 44.0, "command": "set_crossfader", "params": {"position": 1.0, "fade_duration": 4, "curve": "smooth"}},
+    {"time": 48.0, "command": "loop_exit", "params": {"deck": "A"}},
+    {"time": 50.0, "command": "beat_fx_off", "params": {}},
+    {"time": 55.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_low", "value": 0.8, "fade_duration": 5}},
+    {"time": 60.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_mid", "value": 0.8, "fade_duration": 5}},
+    {"time": 65.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_high", "value": 0.8, "fade_duration": 5}}
+  ]
+}

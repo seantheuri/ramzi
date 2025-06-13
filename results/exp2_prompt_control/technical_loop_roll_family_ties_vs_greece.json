@@ -1,0 +1,199 @@
+{
+  "description": "This mix utilizes harmonic mixing and dynamic effects to create a seamless transition. By applying a beat repeat and high-pass filter on the outgoing track, we creatively introduce the incoming track at a synchronized beat.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Beat repeat and filter sweep",
+    "Extended blend with EQ adjustment"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 61.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": 0.3
+      }
+    },
+    {
+      "time": 62.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 138.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 142.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 1.0
+      }
+    },
+    {
+      "time": 143.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.5
+      }
+    },
+    {
+      "time": 144.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.25
+      }
+    },
+    {
+      "time": 145.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.125
+      }
+    },
+    {
+      "time": 146.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "A",
+        "fx_type": "filter",
+        "params": {
+          "cutoff_hz": [
+            400,
+            10000
+          ],
+          "fade_duration": 1.0
+        }
+      }
+    },
+    {
+      "time": 147.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 148.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 158.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": false
+      }
+    },
+    {
+      "time": 159.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "A",
+        "fx_type": "none",
+        "params": {}
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 165.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 170.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 240.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

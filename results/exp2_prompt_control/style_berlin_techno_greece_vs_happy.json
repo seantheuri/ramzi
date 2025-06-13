@@ -1,0 +1,182 @@
+{
+  "description": "This mix uses harmonic mixing between the compatible Camelot keys and a tempo adjustment for seamless blending. The transition is achieved with extended loop usage and filter effects for a hypnotic Berlin techno vibe.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot keys",
+    "Tempo adjustment for beat alignment",
+    "Extended loop and filter effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 86
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 8.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "A",
+        "beats": 8
+      }
+    },
+    {
+      "time": 8.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 500,
+        "fade_duration": 10
+      }
+    },
+    {
+      "time": 18.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 86
+      }
+    },
+    {
+      "time": 19.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 19.5,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 20.5,
+      "command": "auto_loop",
+      "params": {
+        "deck": "B",
+        "beats": 16
+      }
+    },
+    {
+      "time": 22.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.4,
+        "fade_duration": 10
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 62.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 5
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.5,
+        "fade_duration": 5
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 5
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 5
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

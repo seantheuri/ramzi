@@ -1,0 +1,143 @@
+{
+  "description": "This mix utilizes harmonic mixing, aligning both tracks in key and BPM to create a smooth transition. We leverage the 'vocals' stem from Song A and blend it with the instrumental sections of Song B, while syncing the beats for a seamless transition. Effects and EQ adjustments are applied to maintain energy and clarity throughout the mix.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot keys",
+    "Vocals stem overlay",
+    "EQ adjustments for smooth frequency transition",
+    "Beat matching and phrase alignment",
+    "Creative use of effects and loops"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 31.16,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 1
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/popstar_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 30.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 15.0
+      }
+    },
+    {
+      "time": 53.37,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.6,
+        "fade_duration": 15.0
+      }
+    },
+    {
+      "time": 94.3,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 94.3,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 94.3,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 94.3,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 104.3,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 104.3,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 0.0,
+        "curve": "smooth"
+      }
+    }
+  ]
+}

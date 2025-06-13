@@ -1,0 +1,214 @@
+{
+  "description": "This mix seamlessly transitions from Song A to Song B using harmonic mixing, tempo adjustments, and creative use of stems and effects. The blend leverages a long filter sweep and synchronized loops to maintain energy and create a hypnotic atmosphere typical of a Berlin techno set.",
+  "technique_highlights": [
+    "harmonic mixing",
+    "tempo adjustment",
+    "filter sweeps",
+    "vocal stem overlay",
+    "synchronized loops",
+    "EQ transitions"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_mid",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_high",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 11.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 11.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 11.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_mid",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 11.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 5000,
+        "fade_duration": 15.0
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "filter_cutoff_hz",
+        "value": 200,
+        "fade_duration": 15.0
+      }
+    },
+    {
+      "time": 46.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "A",
+        "beats": 8
+      }
+    },
+    {
+      "time": 61.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 62.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 8
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 81.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 81.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 101.0,
+      "command": "beat_fx_off",
+      "params": {}
+    }
+  ]
+}

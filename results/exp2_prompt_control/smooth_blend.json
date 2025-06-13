@@ -1,0 +1,223 @@
+{
+  "description": "This mix creates a smooth and extended blend between the choruses of both tracks using harmonic mixing, EQ adjustments, and beat effects for a dynamic transition. The use of loops, hot cues, and filter effects ensures a memorable and seamless experience.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot wheel",
+    "EQ adjustments for frequency transitions",
+    "Looping and hot cue juggling",
+    "Creative use of filter and echo effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/popstar_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 25.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 64.0,
+      "command": "seek_to_time",
+      "params": {
+        "deck": "A",
+        "time_in_seconds": 124.238
+      }
+    },
+    {
+      "time": 64.5,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 65.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 66.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "B",
+        "beats": 32
+      }
+    },
+    {
+      "time": 66.5,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 67.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 67.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 68.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "A",
+        "fx_type": "filter",
+        "params": {
+          "cutoff": 1500
+        }
+      }
+    },
+    {
+      "time": 68.5,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A",
+        "beats": 16,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 69.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.0,
+        "fade_duration": 16.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 85.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 86.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 8
+      }
+    },
+    {
+      "time": 102.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 16.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 118.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 119.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 120.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.5,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 122.0,
+      "command": "beat_fx_off",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A"
+      }
+    },
+    {
+      "time": 124.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 2.0
+      }
+    }
+  ]
+}

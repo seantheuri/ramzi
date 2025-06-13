@@ -1,0 +1,180 @@
+{
+  "description": "This mix creatively blends 'Just Wanna Rock' into 'Family Ties' by utilizing harmonic mixing, energy matching, and extended blending techniques. The transition leverages beat sync, EQ adjustments, and performance effects for a seamless and dynamic experience.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beat Sync",
+    "EQ Adjustment",
+    "Hot Cue Usage",
+    "Pad FX",
+    "Looping"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "analysis/just_wanna_rock_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "analysis/family_ties_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 6.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 6.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 7.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_mid",
+        "value": 0.5,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "loop_in",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 24.0,
+      "command": "loop_out",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.8,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_mid",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 15.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 4
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "beat_fx_on",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.7
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "B"
+      }
+    }
+  ]
+}

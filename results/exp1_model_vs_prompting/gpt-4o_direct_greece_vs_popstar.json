@@ -1,0 +1,179 @@
+{
+  "description": "This mix will use harmonic mixing to blend Song A and Song B, leveraging their compatible Camelot keys for a seamless transition. We'll utilize hot cues, looping, and EQ adjustments to create a smooth and engaging transition, allowing both tracks to play together effectively.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Hot cues for precise entry points",
+    "EQ adjustments for frequency balance",
+    "Looping for smooth transitions"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/popstar_analysis.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 3.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 5.5,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 6.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "A",
+        "beats": 8
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    }
+  ]
+}

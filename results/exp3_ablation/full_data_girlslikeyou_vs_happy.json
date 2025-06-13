@@ -1,0 +1,171 @@
+{
+  "description": "This transition creatively blends 'Girls Like You' with 'Happy' using harmonic mixing and dynamic effects to create a seamless and energetic mix. The use of hot cues and beat matching ensures precise alignment, while effects like reverb and echo add depth during the transition.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Hot Cues",
+    "EQ Techniques",
+    "Beat Matching",
+    "Pad FX"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_girlslikeyou_vs_happy_full_data.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_girlslikeyou_vs_happy_full_data.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 170.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 171.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 171.5,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 172.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 1
+      }
+    },
+    {
+      "time": 175.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 179.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 183.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 184.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 186.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_mid",
+        "value": 0.0,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 188.0,
+      "command": "beat_fx_on",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 190.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 4.0
+      }
+    },
+    {
+      "time": 194.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 194.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 1
+      }
+    }
+  ]
+}

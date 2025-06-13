@@ -1,0 +1,159 @@
+{
+  "description": "This mix creatively transitions from Song A to Song B by utilizing a beat repeat and high-pass filter effect on the outgoing track, while smoothly introducing the incoming track with harmonic mixing and synchronized beats.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beat Repeat Effect",
+    "High-Pass Filter Sweep",
+    "Extended Blend"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/just_wanna_rock_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 2.5,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 3.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 4.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "beat_repeat"
+      }
+    },
+    {
+      "time": 4.5,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 1
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.5
+      }
+    },
+    {
+      "time": 5.5,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.25
+      }
+    },
+    {
+      "time": 6.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 6.5,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 300,
+        "fade_duration": 2.0
+      }
+    },
+    {
+      "time": 7.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 8.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 9.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 9.5,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": false,
+        "beats": 0
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 0.5
+      }
+    }
+  ]
+}

@@ -712,8 +712,8 @@ def create_mix_simple():
             
             # Save both files temporarily
             logger.info("💾 Saving uploaded files...")
-            track_a_path = temp_path / f"track_a_{secure_filename(file_a.filename)}"
-            track_b_path = temp_path / f"track_b_{secure_filename(file_b.filename)}"
+            track_a_path = BASE_DIR / app.config['UPLOAD_FOLDER'] / f"track_a_{secure_filename(file_a.filename)}"
+            track_b_path = BASE_DIR / app.config['UPLOAD_FOLDER'] / f"track_b_{secure_filename(file_b.filename)}"
             
             file_a.save(str(track_a_path))
             file_b.save(str(track_b_path))
@@ -729,9 +729,9 @@ def create_mix_simple():
             if not analysis_b:
                 raise Exception("Failed to analyze Track B")
             
-            # Save analysis files temporarily for LLM processing
-            analysis_a_path = temp_path / "track_a_analysis.json"
-            analysis_b_path = temp_path / "track_b_analysis.json"
+            # Save analysis files for LLM processing
+            analysis_a_path = BASE_DIR / app.config['ANALYSIS_FOLDER'] / f"{Path(file_a.filename).stem}_analysis.json"
+            analysis_b_path = BASE_DIR / app.config['ANALYSIS_FOLDER'] / f"{Path(file_b.filename).stem}_analysis.json"
             
             with open(analysis_a_path, 'w') as f:
                 json.dump(_sanitize(analysis_a), f, indent=2)
@@ -740,9 +740,11 @@ def create_mix_simple():
             
             # Generate mix script
             logger.info("🤖 Generating AI mix script...")
-            mix_script_path = temp_path / "generated_mix.json"
+            mix_script_path = BASE_DIR / app.config['MIX_SCRIPTS_FOLDER'] / f"{Path(file_a.filename).stem}_{Path(file_b.filename).stem}_mix.json"
             
-            generate_mix_script(
+            mix_script_data = generate_mix_script(
+                analysis_a,
+                analysis_b,
                 str(analysis_a_path),
                 str(analysis_b_path),
                 user_prompt,
@@ -751,9 +753,9 @@ def create_mix_simple():
                 model
             )
             
-            # Load the generated mix script
-            with open(mix_script_path, 'r') as f:
-                mix_script_data = json.load(f)
+            # Save mix script to file
+            with open(mix_script_path, 'w') as f:
+                json.dump(mix_script_data, f, indent=2)
             
             # Validate the script
             is_valid = validate_mix_script(mix_script_data)

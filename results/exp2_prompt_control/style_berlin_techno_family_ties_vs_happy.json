@@ -1,0 +1,165 @@
+{
+  "description": "This mix uses a hypnotic blend style with long, filter-heavy transitions, leveraging key-compatible stems and effects to create a cohesive and memorable experience, all while maintaining energy flow.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Filter Transitions",
+    "Looping",
+    "Beat FX",
+    "EQ Techniques"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 14.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "beat_fx_on",
+      "params": {}
+    },
+    {
+      "time": 40.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 200,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "channel_fader",
+        "value": 1.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "loop_in",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 72.0,
+      "command": "loop_out",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 90.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 110.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

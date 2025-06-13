@@ -1,0 +1,29 @@
+{
+  "description": "In this mix, I focused on a smooth, harmonic transition by syncing BPMs and utilizing hot cues and loops to align phrases. The use of filter effects and EQ adjustments helps to seamlessly blend the two tracks, while strategic beat FX and a gradual crossfade ensure a memorable transition.",
+  "technique_highlights": ["Beat Sync", "EQ Adjustments", "Filter FX", "Hot Cues", "Looping", "Crossfading"],
+  "total_duration": 240.0,
+  "script": [
+    {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "happy.mp3", "target_bpm": 161.5}},
+    {"time": 0.5, "command": "load_track", "params": {"deck": "B", "file_path": "just_wanna_rock.mp3", "target_bpm": 161.5}},
+    {"time": 1.0, "command": "play", "params": {"deck": "A"}},
+    {"time": 7.0, "command": "auto_loop", "params": {"deck": "A", "beats": 16}},
+    {"time": 8.0, "command": "set_hot_cue", "params": {"deck": "B", "cue_idx": 0}},
+    {"time": 10.0, "command": "set_performance_mode", "params": {"deck": "A", "mode": "pad_fx1"}},
+    {"time": 10.5, "command": "toggle_pad_fx", "params": {"deck": "A", "effect_id": 1}},
+    {"time": 12.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_low", "value": 0.3, "fade_duration": 4.0}},
+    {"time": 15.0, "command": "play", "params": {"deck": "B"}},
+    {"time": 15.5, "command": "jump_hot_cue", "params": {"deck": "B", "cue_idx": 0}},
+    {"time": 16.0, "command": "beat_sync", "params": {"deck": "B"}},
+    {"time": 20.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_high", "value": 0.7, "fade_duration": 4.0}},
+    {"time": 24.0, "command": "set_crossfader", "params": {"position": 0.5, "fade_duration": 8.0, "curve": "smooth"}},
+    {"time": 32.0, "command": "loop_in", "params": {"deck": "B"}},
+    {"time": 36.0, "command": "loop_out", "params": {"deck": "B"}},
+    {"time": 40.0, "command": "set_color_fx", "params": {"deck": "B", "fx_type": "filter", "params": {"value": 800}}},
+    {"time": 45.0, "command": "set_crossfader", "params": {"position": 1.0, "fade_duration": 5.0, "curve": "smooth"}},
+    {"time": 50.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "volume", "value": 0.0, "fade_duration": 3.0}},
+    {"time": 55.0, "command": "stop", "params": {"deck": "A"}},
+    {"time": 60.0, "command": "set_beat_fx", "params": {"fx_type": "echo", "channel": "B", "beats": 4, "depth": 0.5}},
+    {"time": 60.5, "command": "beat_fx_on", "params": {"channel": "B"}},
+    {"time": 65.0, "command": "beat_fx_off", "params": {"channel": "B"}}
+  ]
+}

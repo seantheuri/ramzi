@@ -1,0 +1,141 @@
+{
+  "description": "This mix creates a seamless transition by aligning the tracks' energy and key, using harmonic mixing and extended filtering. The transition is enhanced through loops and EQ adjustments, resulting in a smooth, techno-inspired blend.",
+  "technique_highlights": [
+    "harmonic mixing",
+    "extended filter transitions",
+    "looping"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 16.0,
+      "command": "auto_loop",
+      "params": {
+        "deck": "A",
+        "beats": 16
+      }
+    },
+    {
+      "time": 32.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/girlslikeyou_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 45.5,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 8
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 800,
+        "fade_duration": 15.0
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "loop_exit",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 95.0,
+      "command": "beat_fx_off",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B"
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 110.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

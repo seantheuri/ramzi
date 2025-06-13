@@ -1,0 +1,182 @@
+{
+  "description": "This mix transitions smoothly from Track A to Track B by creatively utilizing hot cues, beat sync, and stem isolation, ensuring a harmonic and dynamic blend. The transition is enriched with subtle EQ adjustments and a temporary vocal stem overlay to highlight the incoming track.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beat Sync",
+    "Stem Isolation",
+    "EQ Adjustments",
+    "Pad FX Usage"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_greece_vs_just_wanna_rock_no_structure.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_greece_vs_just_wanna_rock_no_structure.json",
+        "target_bpm": 152.0
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 10.5,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 15.5,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 21.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 22.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 23.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.8,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 0.8,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.7,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    }
+  ]
+}

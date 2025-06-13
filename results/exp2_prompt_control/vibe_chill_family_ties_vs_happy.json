@@ -1,0 +1,158 @@
+{
+  "description": "This mix transition smoothly blends Song A and Song B by aligning the chorus of Song A with the intro of Song B using harmonic mixing and EQ adjustments. It creatively uses the 'vocals' stem of Song A to overlay with Song B's beat, creating a seamless, chilled-out vibe.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot compatible keys",
+    "Smooth EQ transitions between tracks",
+    "Creative use of 'vocals' stem for overlay"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/family_ties_analysis.json",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "seek_to_time",
+      "params": {
+        "deck": "A",
+        "time_in_seconds": 60.28
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 3
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.4,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.6,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 3
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "B"
+      }
+    }
+  ]
+}

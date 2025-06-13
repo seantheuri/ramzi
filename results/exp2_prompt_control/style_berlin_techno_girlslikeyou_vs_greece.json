@@ -1,0 +1,162 @@
+{
+  "description": "This mix utilizes harmonic mixing, long filter blends, and creative stem isolation to smoothly transition from Song A to Song B, with a focus on maintaining energy and highlighting key elements of both tracks.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Long Filter Blends",
+    "Stem Isolation",
+    "EQ Transitioning",
+    "Beat Syncing"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/girlslikeyou_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 15.5,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 5
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 1500,
+        "fade_duration": 20.0
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 15.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 110.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "A"
+      }
+    }
+  ]
+}

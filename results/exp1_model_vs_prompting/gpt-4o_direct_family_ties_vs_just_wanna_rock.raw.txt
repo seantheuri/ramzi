@@ -1,0 +1,194 @@
+{
+  "description": "This transition uses harmonic mixing and beat matching to create a smooth blend between 'family_ties' and 'just_wanna_rock'. Key shifting and EQ adjustments ensure a seamless transition, while effects like echo and filter sweeps add creative flair.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "Beat Matching",
+    "EQ Adjustments",
+    "Key Shifting",
+    "Creative Effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "family_ties.mp3",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "just_wanna_rock.mp3",
+        "target_bpm": 132.51
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 16.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 45.5,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 46.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "key_shift"
+      }
+    },
+    {
+      "time": 60.5,
+      "command": "key_shift",
+      "params": {
+        "deck": "B",
+        "semitones": -1
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 95.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "A",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 100.5,
+      "command": "beat_fx_on",
+      "params": {
+        "channel": "A"
+      }
+    },
+    {
+      "time": 110.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 120.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 125.0,
+      "command": "loop_in",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 129.0,
+      "command": "loop_out",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 130.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "B",
+        "fx_type": "filter",
+        "params": {
+          "freq": 1000
+        }
+      }
+    },
+    {
+      "time": 135.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 9
+      }
+    },
+    {
+      "time": 140.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "A"
+      }
+    },
+    {
+      "time": 150.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    }
+  ]
+}

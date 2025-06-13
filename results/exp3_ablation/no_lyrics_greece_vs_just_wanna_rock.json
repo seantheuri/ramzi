@@ -1,0 +1,173 @@
+{
+  "description": "This mix leverages harmonic mixing by aligning the keys and strategically using the 'vocals' stem to create a smooth transition. Effects like echo and reverb are employed for a memorable blend, while beat syncing ensures seamless tempo alignment.",
+  "technique_highlights": [
+    "Harmonic mixing",
+    "Stem isolation",
+    "Beat syncing",
+    "Pad FX",
+    "EQ adjustments"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_greece_vs_just_wanna_rock_no_lyrics.json",
+        "target_bpm": 86.13
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_greece_vs_just_wanna_rock_no_lyrics.json",
+        "target_bpm": 152.0
+      }
+    },
+    {
+      "time": 16.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": -0.1
+      }
+    },
+    {
+      "time": 17.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 18.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 19.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_high",
+        "value": 0.3,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.5
+      }
+    },
+    {
+      "time": 26.0,
+      "command": "beat_fx_on",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 40.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "B"
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.5,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_high",
+        "value": 0.5,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_tempo",
+      "params": {
+        "deck": "B",
+        "value": 0.0
+      }
+    }
+  ]
+}

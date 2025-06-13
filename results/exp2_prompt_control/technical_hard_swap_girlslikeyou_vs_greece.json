@@ -1,0 +1,178 @@
+{
+  "description": "This mix transition utilizes a harmonic blend technique between Song A and Song B. The transition involves a dynamic swap of basslines with synchronized EQ adjustments and an extended blend using hot cues and pad FX for a creative touch. The mix showcases a memorable, seamless flow from the outgoing to incoming track.",
+  "technique_highlights": [
+    "Harmonic Mixing using Camelot keys",
+    "EQ Bass Swap with Synchronized Timing",
+    "Creative Use of Hot Cues and Pad FX"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/girlslikeyou_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/Users/karim/Desktop/Projects/ramzi/analysis/greece_analysis.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 12.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 180.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 182.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 184.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "A",
+        "effect_id": 4
+      }
+    },
+    {
+      "time": 190.0,
+      "command": "seek_to_time",
+      "params": {
+        "deck": "A",
+        "time_in_seconds": 173.65
+      }
+    },
+    {
+      "time": 192.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 196.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 198.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 198.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 202.0,
+      "command": "jump_hot_cue",
+      "params": {
+        "deck": "B",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 204.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 206.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 4.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 210.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 210.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 1.0
+      }
+    },
+    {
+      "time": 220.0,
+      "command": "beat_fx_off",
+      "params": {
+        "channel": "A"
+      }
+    },
+    {
+      "time": 220.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "A",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 240.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

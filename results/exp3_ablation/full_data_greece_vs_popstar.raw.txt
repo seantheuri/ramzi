@@ -1,0 +1,150 @@
+{
+  "description": "This mix transitions from 'greece.mp3' to 'popstar.mp3' using harmonic mixing and creative effects. The mix uses beat matching, EQ adjustments, and pad effects to create a smooth, engaging blend over an extended period.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot key compatibility",
+    "Beat matching and phrase alignment",
+    "Creative use of EQ and pad effects"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "greece.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "popstar.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 20.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "hot_cue"
+      }
+    },
+    {
+      "time": 25.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 35.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 45.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.2,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 50.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.8,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 9
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "beat_fx_on",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.7
+      }
+    },
+    {
+      "time": 100.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 120.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "filter_cutoff_hz",
+        "value": 20000,
+        "fade_duration": 10.0
+      }
+    }
+  ]
+}

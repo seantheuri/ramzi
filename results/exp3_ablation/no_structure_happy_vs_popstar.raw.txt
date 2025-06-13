@@ -1,0 +1,139 @@
+{
+  "description": "This mix transition blends 'happy.mp3' and 'popstar.mp3' harmonically using smooth EQ transitions, creative looping, and pad effects to enhance the energy flow. The mix showcases both tracks by aligning choruses and using effects for a seamless experience.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot keys",
+    "Extended blend with aligned choruses",
+    "Creative use of pad FX and loops"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "happy.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "popstar.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 2.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 7.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "beat_loop"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.3,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.7,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 41.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 42.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 3
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "pause",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "description": "This mix smoothly transitions from Song A to Song B by first aligning their tempos and utilizing harmonic mixing. Creative use of the 'vocals' stem and pad effects enhances the transition, while loop and EQ techniques ensure a seamless blend.",
+  "technique_highlights": [
+    "harmonic mixing",
+    "tempo adjustment",
+    "stem manipulation",
+    "pad effects",
+    "looping"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_just_wanna_rock_vs_popstar_no_lyrics.json",
+        "target_bpm": 152.0
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_just_wanna_rock_vs_popstar_no_lyrics.json",
+        "target_bpm": 152.0
+      }
+    },
+    {
+      "time": 5.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 48.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 49.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 49.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 49.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 55.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "reverb",
+        "channel": 1,
+        "beats": 4,
+        "depth": 0.6
+      }
+    },
+    {
+      "time": 74.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 80.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "pad_fx1"
+      }
+    },
+    {
+      "time": 81.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 2
+      }
+    },
+    {
+      "time": 85.0,
+      "command": "toggle_pad_fx",
+      "params": {
+        "deck": "B",
+        "effect_id": 2
+      }
+    },
+    {
+      "time": 120.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

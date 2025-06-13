@@ -1,0 +1,110 @@
+{
+  "description": "This mix uses harmonic mixing in A Minor with synchronized BPM adjustments and creative use of stems to smoothly blend the two tracks. The transition features a key shift, vocal isolation, and effects to enhance the auditory experience.",
+  "technique_highlights": [
+    "harmonic_mixing",
+    "vocal_isolation",
+    "BPM_sync",
+    "key_shift",
+    "smooth_EQ_transitions"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpwmxe2d0t/a_family_ties_vs_girlslikeyou_no_lyrics.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpwmxe2d0t/b_family_ties_vs_girlslikeyou_no_lyrics.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_performance_mode",
+      "params": {
+        "deck": "B",
+        "mode": "key_shift"
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "key_shift",
+      "params": {
+        "deck": "B",
+        "semitones": 1
+      }
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 70.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 10.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 80.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "A",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 90.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "echo",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.7
+      }
+    },
+    {
+      "time": 95.0,
+      "command": "beat_fx_off",
+      "params": {}
+    }
+  ]
+}

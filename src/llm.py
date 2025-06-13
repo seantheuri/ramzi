@@ -99,6 +99,11 @@ def generate_llm_prompt(summary_a: Dict[str, Any], summary_b: Dict[str, Any],
 ### STEM SELECTION:
 - `set_segment`: Instantly switch the playing audio on a deck between "full", "vocals" (harmonic), or "beat" (percussive) stems. Params: deck, segment ('full'|'vocals'|'beat')
 
+**IMPORTANT RULES FOR STEMS:**
+1.  **Contain Stems Within Transitions**: Using a stem ('vocals') is for temporary creative effect during a mix. You **must** return the deck to the 'full' segment as part of your transition. Do not leave a stem playing in isolation after the mix is complete.
+2.  **Prioritize 'vocals' Stem**: For creative layering (e.g., bringing an acapella over the other track's beat), the 'vocals' stem is your primary tool. It contains the full harmonic and melodic content of the song.
+3.  **Avoid 'beat' Stem**: Do not use the `set_segment` command with `segment: 'beat'`. It is low quality and not suitable for mixing.
+
 ### MIXER CONTROLS:
 - `set_parameter`: Control mixer knobs/faders - params: deck, parameter, value, fade_duration
   - Parameters: volume, trim, channel_fader, eq_high, eq_mid, eq_low, filter_cutoff_hz
@@ -140,6 +145,7 @@ def generate_llm_prompt(summary_a: Dict[str, Any], summary_b: Dict[str, Any],
 3. **Duration**: Create a mix that showcases both tracks with a memorable transition
 4. **Creativity**: Use at least 3 different controller features creatively
 5. **Technical Excellence**: Demonstrate professional mixing techniques
+6. **Effect Cleanup**: After a transition, you must deactivate any temporary effects like loops, beat repeats, or Pad FX. Do not leave effects running unnecessarily.
 
 ## YOUR TASK:
 
@@ -403,47 +409,6 @@ def generate_mix_script(analysis_data_a: Dict[str, Any], analysis_data_b: Dict[s
         print("3. Try using a different model (gpt-4, gpt-3.5-turbo)")
         raise
 
-def create_example_scripts():
-    """Generate example mix scripts for different styles."""
-    examples = {
-        "smooth_blend": {
-            "description": "Classic long blend with EQ swap and filter sweeps",
-            "technique_highlights": ["EQ mixing", "Filter sweeps", "Harmonic mixing"],
-            "total_duration": 300.0,
-            "script": [
-                {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "track1.json", "target_bpm": 128}},
-                {"time": 0.0, "command": "load_track", "params": {"deck": "B", "file_path": "track2.json", "target_bpm": 128}},
-                {"time": 0.1, "command": "play", "params": {"deck": "A"}},
-                {"time": 0.1, "command": "set_crossfader", "params": {"position": 0.0}},
-                {"time": 120.0, "command": "play", "params": {"deck": "B"}},
-                {"time": 120.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_low", "value": 0.0}},
-                {"time": 128.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "eq_low", "value": 0.5, "fade_duration": 16.0}},
-                {"time": 128.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_low", "value": 0.0, "fade_duration": 16.0}},
-                {"time": 120.0, "command": "set_crossfader", "params": {"position": 1.0, "fade_duration": 32.0}}
-            ]
-        },
-        "creative_scratch": {
-            "description": "Hip-hop style mix with scratching, beat juggling, and transforms",
-            "technique_highlights": ["Scratching", "Beat juggling", "Hot cues", "Transform"],
-            "total_duration": 180.0,
-            "script": [
-                {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "track1.json"}},
-                {"time": 0.0, "command": "load_track", "params": {"deck": "B", "file_path": "track2.json"}},
-                {"time": 0.1, "command": "set_smart_fader", "params": {"enabled": true, "type": "scratch"}},
-                {"time": 0.1, "command": "play", "params": {"deck": "A"}},
-                {"time": 10.0, "command": "set_hot_cue", "params": {"deck": "A", "cue_idx": 0}},
-                {"time": 12.0, "command": "set_hot_cue", "params": {"deck": "A", "cue_idx": 1}},
-                {"time": 20.0, "command": "jog_wheel", "params": {"deck": "A", "scratch": true, "delta": -0.5}},
-                {"time": 20.2, "command": "jog_wheel", "params": {"deck": "A", "scratch": true, "delta": 0.5}}
-            ]
-        }
-    }
-    
-    for name, script in examples.items():
-        with open(f"example_{name}.json", 'w') as f:
-            json.dump(script, f, indent=2)
-        print(f"Created example: example_{name}.json")
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate advanced DJ mix scripts using AI",
@@ -469,14 +434,11 @@ Examples:
     parser.add_argument("-m", "--model", type=str,
                        default="gpt-4o",
                        help="OpenAI model to use")
-    parser.add_argument("--create-examples", action="store_true",
-                       help="Create example mix scripts")
     
     args = parser.parse_args()
     
-    if args.create_examples:
-        create_example_scripts()
-    elif args.analysis_file_a and args.analysis_file_b and args.output_file:
+
+    if args.analysis_file_a and args.analysis_file_b and args.output_file:
         # Read analysis files
         print("\n📁 Loading analysis files...")
         with open(args.analysis_file_a, 'r') as f:
@@ -487,6 +449,8 @@ Examples:
         mix_script_data = generate_mix_script(
             data_a,
             data_b, 
+            args.analysis_file_a,
+            args.analysis_file_b,
             args.prompt, 
             args.output_file,
             args.style,

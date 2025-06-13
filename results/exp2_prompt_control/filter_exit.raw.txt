@@ -1,0 +1,148 @@
+{
+  "description": "This mix employs harmonic mixing by transitioning from C Minor to F Minor while maintaining energy flow. A high-pass filter gradually washes out Song A, and a smooth crossfade with synchronized beats ensures a seamless blend.",
+  "technique_highlights": [
+    "Harmonic Mixing",
+    "High-Pass Filter Washout",
+    "Beat Synchronization",
+    "Hot Cue Jump",
+    "Long Crossfade"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "popstar.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 124.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "happy.mp3",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 124.5,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 125.0,
+      "command": "set_hot_cue",
+      "params": {
+        "deck": "A",
+        "cue_idx": 0
+      }
+    },
+    {
+      "time": 125.5,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 125.5,
+      "command": "beat_sync",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 126.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.0,
+        "fade_duration": 32.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 126.0,
+      "command": "set_color_fx",
+      "params": {
+        "deck": "A",
+        "fx_type": "filter",
+        "params": {
+          "filter_cutoff_hz": 20000
+        }
+      }
+    },
+    {
+      "time": 126.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 200,
+        "fade_duration": 32.0
+      }
+    },
+    {
+      "time": 158.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": true,
+        "beats": 0.5
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "beat_repeat",
+      "params": {
+        "deck": "A",
+        "activate": false,
+        "beats": 0.5
+      }
+    },
+    {
+      "time": 158.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 2.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 160.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 0.0
+      }
+    }
+  ]
+}

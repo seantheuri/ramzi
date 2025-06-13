@@ -1,0 +1,113 @@
+{
+  "description": "This mix uses a high-pass filter sweep on Song A to creatively mix into Song B's breakdown, with a smooth volume and EQ transition for a seamless blend.",
+  "total_duration": 220.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "analysis/popstar_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "analysis/happy_analysis.json",
+        "target_bpm": 161.5
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 0.0,
+      "command": "seek_to_time",
+      "params": {
+        "deck": "B",
+        "time_in_seconds": 0.0
+      }
+    },
+    {
+      "time": 180.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "filter_cutoff_hz",
+        "value": 8000.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 185.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "volume",
+        "value": 0.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 185.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "volume",
+        "value": 1.0,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 185.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.7,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 185.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_mid",
+        "value": 0.8,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 185.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_low",
+        "value": 0.9,
+        "fade_duration": 5.0
+      }
+    },
+    {
+      "time": 190.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

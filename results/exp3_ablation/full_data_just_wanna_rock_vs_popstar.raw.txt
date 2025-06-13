@@ -1,0 +1,28 @@
+{
+  "description": "This mix creates a seamless blend between 'just_wanna_rock.mp3' and 'popstar.mp3' using harmonic mixing, beat sync, and creative effects. The transition leverages EQ adjustments, loop techniques, and synchronized beat effects to maintain energy flow and create a memorable experience.",
+  "technique_highlights": ["Harmonic Mixing", "Beat Sync", "EQ Adjustments", "Loop Techniques", "Beat Effects"],
+  "total_duration": 240.0,
+  "script": [
+    {"time": 0.0, "command": "load_track", "params": {"deck": "A", "file_path": "just_wanna_rock.mp3", "target_bpm": 152}},
+    {"time": 1.0, "command": "play", "params": {"deck": "A"}},
+    {"time": 2.0, "command": "set_master_deck", "params": {"deck": "A"}},
+    {"time": 3.0, "command": "load_track", "params": {"deck": "B", "file_path": "popstar.mp3", "target_bpm": 152}},
+    {"time": 4.0, "command": "set_performance_mode", "params": {"deck": "B", "mode": "hot_cue"}},
+    {"time": 5.0, "command": "set_hot_cue", "params": {"deck": "B", "cue_idx": 0}},
+    {"time": 20.0, "command": "play", "params": {"deck": "B"}},
+    {"time": 21.0, "command": "beat_sync", "params": {"deck": "B"}},
+    {"time": 22.0, "command": "set_performance_mode", "params": {"deck": "A", "mode": "pad_fx1"}},
+    {"time": 23.0, "command": "toggle_pad_fx", "params": {"deck": "A", "effect_id": 3}},
+    {"time": 24.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_low", "value": 0.3, "fade_duration": 5.0}},
+    {"time": 29.0, "command": "jump_hot_cue", "params": {"deck": "B", "cue_idx": 0}},
+    {"time": 30.0, "command": "set_crossfader", "params": {"position": 0.5, "fade_duration": 10.0, "curve": "smooth"}},
+    {"time": 40.0, "command": "set_parameter", "params": {"deck": "A", "parameter": "eq_mid", "value": 0.4, "fade_duration": 5.0}},
+    {"time": 45.0, "command": "set_color_fx", "params": {"deck": "B", "fx_type": "filter", "params": {"frequency": 1000}}},
+    {"time": 55.0, "command": "set_crossfader", "params": {"position": 1.0, "fade_duration": 5.0, "curve": "smooth"}},
+    {"time": 60.0, "command": "stop", "params": {"deck": "A"}},
+    {"time": 65.0, "command": "set_performance_mode", "params": {"deck": "B", "mode": "beat_jump"}},
+    {"time": 70.0, "command": "beat_fx_on", "params": {"fx_type": "echo", "channel": "B", "beats": 4, "depth": 0.7}},
+    {"time": 75.0, "command": "beat_fx_off", "params": {"fx_type": "echo"}},
+    {"time": 80.0, "command": "set_parameter", "params": {"deck": "B", "parameter": "filter_cutoff_hz", "value": 20000, "fade_duration": 10.0}}
+  ]
+}

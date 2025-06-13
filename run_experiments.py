@@ -197,9 +197,8 @@ except Exception:
 def run_experiment_1(n_pairs: int = 10):
     """Experiment 1: Evaluate how model and prompting style influence output.
 
-    The experiment explores a 2 × 2 design:
-        • Two models (o3 vs 4o)
-        • Two prompting strategies (direct vs chain-of-thought)
+    The experiment compares gpt-4o against itself using two different
+    prompting strategies (direct vs chain-of-thought).
     """
 
     exp_name = "exp1_model_vs_prompting"
@@ -208,7 +207,6 @@ def run_experiment_1(n_pairs: int = 10):
 
     # Models under test – mapping: nickname → OpenAI model string
     models_to_test: Dict[str, str] = {
-        "o3": "o3-mini",
         "4o": "gpt-4o",
     }
 
@@ -243,8 +241,6 @@ def run_experiment_1(n_pairs: int = 10):
 
         for model_nick, model_id in models_to_test.items():
             for style in prompting_styles:
-                if style == "cot" and model_id == "o3-mini":
-                    continue
                 prompt_base = (
                     "Create a professional mix that showcases both tracks effectively."
                 )
@@ -345,38 +341,52 @@ def run_experiment_1(n_pairs: int = 10):
 # Experiment 2 – Controllability via Prompt Engineering
 # ----------------------------------------------------------------------------
 
-def run_experiment_2():
+def run_experiment_2(n_pairs: int = 10):
     """Experiment 2: Assess whether specific creative instructions are obeyed."""
 
     exp_name = "exp2_prompt_control"
     exp_dir = RESULTS_DIR / exp_name
     exp_dir.mkdir(parents=True, exist_ok=True)
 
-    # Fixed, versatile track pair – change if different analysis filenames are desired
-    default_pair = (ANALYSIS_DIR / "popstar_analysis.json", ANALYSIS_DIR / "happy_analysis.json")
-
-    if not all(p.exists() for p in default_pair):
-        # Fallback to first two analysis files found
-        files = sorted(ANALYSIS_DIR.glob("*_analysis.json"))
-        if len(files) < 2:
-            print("[Experiment 2] Not enough analysis files found for the experiment.")
-            return
-        default_pair = (files[0], files[1])
-        print(f"[Experiment 2] Using fallback tracks: {default_pair[0].name} & {default_pair[1].name}")
+    # Build list of track pairs
+    analysis_files = sorted(ANALYSIS_DIR.glob("*_analysis.json"))
+    if len(analysis_files) < 2:
+        print("[Experiment 2] Not enough analysis files found for the experiment.")
+        return
+    all_pairs = list(combinations(analysis_files, 2))
+    if len(all_pairs) > n_pairs:
+        random.seed(42)
+        selected_pairs = random.sample(all_pairs, n_pairs)
     else:
-        print(f"[Experiment 2] Using tracks: {default_pair[0].name} & {default_pair[1].name}")
+        selected_pairs = all_pairs
 
-    analysis_a, analysis_b = default_pair
-    track_pair_label = f"{analysis_a.stem.replace('_analysis','')}_vs_{analysis_b.stem.replace('_analysis','')}"
+    print(f"[Experiment 2] Running on {len(selected_pairs)} track pairs...")
 
-    # Prompts to evaluate
+    # Prompts to evaluate, from vague to specific
     prompts_to_test: Dict[str, str] = {
-        "smooth_blend": "A very smooth, long, harmonic blend over 32 beats.",
-        "hard_cut": "A fast, energetic, hard cut transition. No fades.",
-        "filter_exit": "Use the high-pass filter to creatively wash out the first song.",
-        "loop_and_scratch": (
-            "Create a hip-hop style transition. Loop the last 2 beats of the outgoing track "
-            "and do a simple baby scratch effect before dropping the new track."
+        "vibe_chill": (
+            "Create a relaxed, chilled-out vibe. The transition should feel "
+            "seamless and natural, letting the music breathe."
+        ),
+        "style_berlin_techno": (
+            "Mix these tracks like a classic Berlin techno DJ. Think long, "
+            "filter-heavy blends and hypnotic loops."
+        ),
+        "technique_acapella_intro": (
+            "Isolate the vocals (acapella) of the incoming track and layer them "
+            "over the beat of the outgoing track for 8 beats before the full "
+            "song comes in."
+        ),
+        "technical_hard_swap": (
+            "Perform a hard swap. At the end of a phrase in Track A, cut the "
+            "bass on A, then immediately start Track B with its bass cut. After "
+            "4 beats, swap the basslines instantly: bring in B's bass and kill A's."
+        ),
+        "technical_loop_roll": (
+            "On the last 4 beats of track A, apply a beat repeat effect, starting "
+            "with a 1-beat loop and halving it every beat down to 1/8th. At the "
+            "same time, apply a high-pass filter sweep. Drop track B on the first "
+            "beat of the next bar."
         ),
     }
 
@@ -384,58 +394,61 @@ def run_experiment_2():
 
     results_records: List[Dict] = []
 
-    for prompt_id, prompt_text in prompts_to_test.items():
-        output_path = exp_dir / f"{prompt_id}.json"
+    for analysis_a, analysis_b in selected_pairs:
+        track_pair_label = f"{analysis_a.stem.replace('_analysis','')}_vs_{analysis_b.stem.replace('_analysis','')}"
 
-        cmd = [
-            sys.executable,
-            str(SRC_DIR / "llm.py"),
-            str(analysis_a),
-            str(analysis_b),
-            "-o",
-            str(output_path),
-            "-p",
-            prompt_text,
-            "-m",
-            model_id,
-        ]
+        for prompt_id, prompt_text in prompts_to_test.items():
+            output_path = exp_dir / f"{prompt_id}_{track_pair_label}.json"
 
-        print("\n------------------------------------------------------------")
-        print(f"[Experiment 2] Prompt '{prompt_id}' → running llm.py ...")
+            cmd = [
+                sys.executable,
+                str(SRC_DIR / "llm.py"),
+                str(analysis_a),
+                str(analysis_b),
+                "-o",
+                str(output_path),
+                "-p",
+                prompt_text,
+                "-m",
+                model_id,
+            ]
 
-        completed = subprocess.run(cmd, capture_output=True, text=True)
-        if completed.returncode != 0:
-            print(f"[Experiment 2] llm.py error: {completed.stderr}")
-            is_valid = False
-            script_data = {}
-        else:
-            try:
-                with output_path.open() as f:
-                    script_data = json.load(f)
-                is_valid = validate_mix_script(script_data)
-            except Exception as e:
-                print(f"[Experiment 2] Failed to read/validate script: {e}")
+            print("\n------------------------------------------------------------")
+            print(f"[Experiment 2] Prompt '{prompt_id}' on pair '{track_pair_label}' → running llm.py ...")
+
+            completed = subprocess.run(cmd, capture_output=True, text=True)
+            if completed.returncode != 0:
+                print(f"[Experiment 2] llm.py error: {completed.stderr}")
                 is_valid = False
                 script_data = {}
+            else:
+                try:
+                    with output_path.open() as f:
+                        script_data = json.load(f)
+                    is_valid = validate_mix_script(script_data)
+                except Exception as e:
+                    print(f"[Experiment 2] Failed to read/validate script: {e}")
+                    is_valid = False
+                    script_data = {}
 
-        metrics = {}
-        if output_path.exists():
-            metrics = analyze_script(output_path, analysis_a, analysis_b)
+            metrics = {}
+            if output_path.exists():
+                metrics = analyze_script(output_path, analysis_a, analysis_b)
 
-        record: Dict = {
-            "experiment_name": exp_name,
-            "prompt_id": prompt_id,
-            "prompt_text": prompt_text,
-            "generated_description": script_data.get("description", ""),
-            "track_pair": track_pair_label,
-            "model_name": model_id,
-            "prompting_style": "direct",
-            "is_valid": is_valid,
-            "command_count": len(script_data.get("script", [])) if script_data else 0,
-            "technique_highlights": ",".join(script_data.get("technique_highlights", [])) if script_data else "",
-        }
-        record.update(metrics)
-        results_records.append(record)
+            record: Dict = {
+                "experiment_name": exp_name,
+                "prompt_id": prompt_id,
+                "prompt_text": prompt_text,
+                "generated_description": script_data.get("description", ""),
+                "track_pair": track_pair_label,
+                "model_name": model_id,
+                "prompting_style": "direct",
+                "is_valid": is_valid,
+                "command_count": len(script_data.get("script", [])) if script_data else 0,
+                "technique_highlights": ",".join(script_data.get("technique_highlights", [])) if script_data else "",
+            }
+            record.update(metrics)
+            results_records.append(record)
 
     # Append to CSV
     df = pd.DataFrame(results_records)
@@ -451,7 +464,7 @@ def run_experiment_2():
 # Experiment 3 – Ablation Study on Input Data
 # ----------------------------------------------------------------------------
 
-def run_experiment_3(n_pairs: int = 5):
+def run_experiment_3(n_pairs: int = 15):
     """Experiment 3: Ablation study – evaluate multiple track pairs.
 
     Parameters
@@ -501,6 +514,17 @@ def run_experiment_3(n_pairs: int = 5):
                 data_a = copy.deepcopy(original_a)
                 data_b = copy.deepcopy(original_b)
 
+                if condition == "no_structure":
+                    data_a.pop("structural_analysis", None)
+                    data_a.pop("sections", None)
+                    data_b.pop("structural_analysis", None)
+                    data_b.pop("sections", None)
+                elif condition == "no_lyrics":
+                    data_a["lyrics_text"] = ""
+                    data_a["lyrics_timed"] = []
+                    data_b["lyrics_text"] = ""
+                    data_b["lyrics_timed"] = []
+
                 # Write to temp files unique per iteration
                 mod_a_path = tmpdir / f"a_{track_pair_label}_{condition}.json"
                 mod_b_path = tmpdir / f"b_{track_pair_label}_{condition}.json"
@@ -542,7 +566,7 @@ def run_experiment_3(n_pairs: int = 5):
 
                 metrics = {}
                 if script_output.exists():
-                    metrics = analyze_script(script_output, mod_a_path, mod_b_path)
+                    metrics = analyze_script(script_output, analysis_a_path, analysis_b_path)
 
                 record: Dict = {
                     "experiment_name": exp_name,
@@ -558,7 +582,7 @@ def run_experiment_3(n_pairs: int = 5):
 
     # Save to CSV
     df = pd.DataFrame(results_records)
-    csv_path = RESULTS_DIR / "experimental_results.csv"
+    csv_path = RESULTS_DIR / "experimental_results2.csv"
     if csv_path.exists():
         df.to_csv(csv_path, mode="a", index=False, header=False)
     else:
@@ -586,7 +610,7 @@ def main():
         "--n-pairs",
         type=int,
         default=10,
-        help="Number of track pairs to sample for experiment 1",
+        help="Number of track pairs to sample for experiments 1, 2, and 3",
     )
 
     args = parser.parse_args()
@@ -595,7 +619,7 @@ def main():
         run_experiment_1(n_pairs=args.n_pairs)
 
     if args.experiment in ("2", "all"):
-        run_experiment_2()
+        run_experiment_2(n_pairs=args.n_pairs)
 
     if args.experiment in ("3", "all"):
         run_experiment_3(n_pairs=args.n_pairs)

@@ -1,0 +1,140 @@
+{
+  "description": "This mix transition creates an energy build-up by gradually increasing the tempo of Song A while introducing the acapella from Song B over its instrumental. The transition is smooth and harmonic, using EQ adjustments and effects to blend the tracks seamlessly.",
+  "technique_highlights": [
+    "Harmonic mixing using Camelot keys",
+    "Tempo alignment and beatmatching",
+    "Creative use of vocals stem",
+    "EQ and filter adjustments for smooth transitions",
+    "Use of effects for energy build-up"
+  ],
+  "total_duration": 240.0,
+  "script": [
+    {
+      "time": 0.0,
+      "command": "load_track",
+      "params": {
+        "deck": "A",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/a_girlslikeyou_vs_just_wanna_rock_no_structure.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 0.5,
+      "command": "set_master_deck",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 1.0,
+      "command": "play",
+      "params": {
+        "deck": "A"
+      }
+    },
+    {
+      "time": 10.0,
+      "command": "load_track",
+      "params": {
+        "deck": "B",
+        "file_path": "/var/folders/ld/_1b22w093ls3h384dcp6p5280000gn/T/tmpx1ytolqu/b_girlslikeyou_vs_just_wanna_rock_no_structure.json",
+        "target_bpm": 128
+      }
+    },
+    {
+      "time": 12.0,
+      "command": "cue_set",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 13.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "vocals"
+      }
+    },
+    {
+      "time": 14.0,
+      "command": "play",
+      "params": {
+        "deck": "B"
+      }
+    },
+    {
+      "time": 15.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "A",
+        "parameter": "eq_low",
+        "value": 0.4,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 16.0,
+      "command": "set_parameter",
+      "params": {
+        "deck": "B",
+        "parameter": "eq_high",
+        "value": 0.6,
+        "fade_duration": 10.0
+      }
+    },
+    {
+      "time": 30.0,
+      "command": "set_beat_fx",
+      "params": {
+        "fx_type": "reverb",
+        "channel": "B",
+        "beats": 4,
+        "depth": 0.7
+      }
+    },
+    {
+      "time": 31.0,
+      "command": "beat_fx_on",
+      "params": {}
+    },
+    {
+      "time": 60.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 0.5,
+        "fade_duration": 5.0,
+        "curve": "smooth"
+      }
+    },
+    {
+      "time": 65.0,
+      "command": "set_segment",
+      "params": {
+        "deck": "B",
+        "segment": "full"
+      }
+    },
+    {
+      "time": 66.0,
+      "command": "beat_fx_off",
+      "params": {}
+    },
+    {
+      "time": 70.0,
+      "command": "set_crossfader",
+      "params": {
+        "position": 1.0,
+        "fade_duration": 5.0,
+        "curve": "linear"
+      }
+    },
+    {
+      "time": 75.0,
+      "command": "stop",
+      "params": {
+        "deck": "A"
+      }
+    }
+  ]
+}

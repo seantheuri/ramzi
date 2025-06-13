@@ -1,6 +1,7 @@
 import os
 import json
 import argparse
+from pathlib import Path
 from openai import OpenAI
 from typing import Dict, List, Any
 
@@ -58,7 +59,7 @@ def generate_llm_prompt(summary_a: Dict[str, Any], summary_b: Dict[str, Any],
                        mix_style: str = "blend") -> str:
     """Constructs the comprehensive prompt for advanced DJ mixing."""
     
-    prompt = f"""You are RAMZI, an expert virtual DJ with access to a professional DDJ-FLX4 controller. Create an innovative and technically impressive mix transition from Song A to Song B.
+    prompt = f"""You are RAMI, an expert virtual DJ with access to a professional DDJ-FLX4 controller. Create an innovative and technically impressive mix transition from Song A to Song B.
 
 ## YOUR DJ CONTROLLER CAPABILITIES:
 
@@ -155,7 +156,7 @@ Generate a JSON object with these exact keys:
   "total_duration": 240.0,  // Total mix duration in seconds
   "script": [
     // Chronologically ordered commands
-    {{"time": 0.0, "command": "load_track", "params": {{"deck": "A", "file_path": "{summary_a['track_name']}", "target_bpm": 128}}}},
+    {{"time": 0.0, "command": "load_track", "params": {{"deck": "A", "file_path": [the analysis file path], "target_bpm": 128}}}},
     // ... more commands
   ]
 }}
@@ -211,9 +212,9 @@ def enhance_script_with_defaults(script_data: Dict[str, Any],
     for cmd in script_data["script"]:
         if cmd["command"] == "load_track":
             if cmd["params"]["deck"] == "A":
-                cmd["params"]["file_path"] = analysis_file_a if analysis_file_a else analysis_a["file_path"]
+                cmd["params"]["file_path"] = analysis_file_a 
             elif cmd["params"]["deck"] == "B":
-                cmd["params"]["file_path"] = analysis_file_b if analysis_file_b else analysis_b["file_path"]
+                cmd["params"]["file_path"] = analysis_file_b 
     
     # Sort commands by time
     script_data["script"].sort(key=lambda x: x["time"])
@@ -244,23 +245,21 @@ def enhance_script_with_defaults(script_data: Dict[str, Any],
     
     return script_data
 
-def generate_mix_script(analysis_file_a: str, analysis_file_b: str, 
+def generate_mix_script(analysis_data_a: Dict[str, Any], analysis_data_b: Dict[str, Any], analysis_file_a: str, analysis_file_b: str,
                        user_prompt: str, output_file_path: str,
                        mix_style: str = "blend",
-                       model: str = "gpt-4-turbo-preview") -> None:
-    """Main function to generate advanced DJ mix scripts."""
+                       model: str = "gpt-4-turbo-preview") -> Dict[str, Any]:
+    """Main function to generate advanced DJ mix scripts.
+    
+    Returns:
+        Dict[str, Any]: The generated mix script data
+    """
     
     print("🎧 RAMZI Virtual DJ - Advanced Mix Generator")
     print("=" * 50)
     
-    print("\n📁 Loading analysis files...")
-    with open(analysis_file_a, 'r') as f:
-        data_a = json.load(f)
-    with open(analysis_file_b, 'r') as f:
-        data_b = json.load(f)
-
-    summary_a = summarize_track_data(data_a)
-    summary_b = summarize_track_data(data_b)
+    summary_a = summarize_track_data(analysis_data_a)
+    summary_b = summarize_track_data(analysis_data_b)
     
     print(f"\n🎵 Track A: {summary_a['track_name']} ({summary_a['bpm']} BPM, {summary_a['key_camelot']})")
     print(f"🎵 Track B: {summary_b['track_name']} ({summary_b['bpm']} BPM, {summary_b['key_camelot']})")
@@ -295,26 +294,64 @@ def generate_mix_script(analysis_file_a: str, analysis_file_b: str,
         print(f"\n📡 Sending to OpenAI API (using {model})...")
         client = OpenAI()  # Assumes OPENAI_API_KEY is set
         
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": "You are RAMZI, an expert virtual DJ. Output only valid JSON for DJ mix scripts."},
-                {"role": "user", "content": prompt}
+        # ------------------------------------------------------------------
+        # Build Chat Completion parameters dynamically to support both
+        # legacy GPT models (gpt-3.5-turbo, gpt-4o, etc.) and new `*-mini`
+        # models that require `max_completion_tokens` and optionally
+        # `reasoning_effort`.
+        # ------------------------------------------------------------------
+
+        chat_params = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are RAMI, an expert virtual DJ. Output only valid JSON for DJ mix scripts.",
+                },
+                {"role": "user", "content": prompt},
             ],
-            temperature=0.7,  # Balanced creativity
-            max_tokens=4000   # Ensure we can handle complex scripts
-        )
+        }
+
+        is_mini = model.endswith("-mini")
+
+        if is_mini:
+            # Use more conservative limit for mini models
+            chat_params["max_completion_tokens"] = 2048
+            # Add reasoning_effort if available for these models
+            chat_params["reasoning_effort"] = "medium"
+        else:
+            chat_params["max_tokens"] = 4000
+            chat_params["temperature"] = 0.7
+
+        chat_params["response_format"] = {"type": "json_object"}
+
+        response = client.chat.completions.create(**chat_params)
         
-        raw_response = response.choices[0].message.content
-        
-        # Clean and parse response
-        json_response = raw_response.strip()
-        if json_response.startswith('```'):
-            # Remove markdown code blocks
-            json_response = json_response.split('```')[1]
-            if json_response.startswith('json'):
-                json_response = json_response[4:]
-        
+        raw_response = response.choices[0].message.content or ""
+
+
+        # Attempt to isolate JSON portion even if additional text (e.g., reasoning) precedes it.
+        def extract_json(text: str) -> str:
+            text = text.strip()
+            # Case 1: wrapped in markdown fences
+            if text.startswith("```"):
+                parts = text.split("```")
+                for part in parts:
+                    part = part.strip()
+                    if part.startswith("json"):
+                        part = part[4:].strip()
+                    if part.startswith("{") and part.rstrip().endswith("}"):
+                        return part
+            # Case 2: plain text, JSON is the first object after reasoning
+            first_brace = text.find('{')
+            last_brace = text.rfind('}')
+            if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                candidate = text[first_brace:last_brace+1]
+                return candidate
+            return text  # Fallback (likely to fail JSON parse)
+
+        json_response = extract_json(raw_response)
+
         print("\n🔍 Parsing and validating mix script...")
         mix_script_data = json.loads(json_response)
         
@@ -322,13 +359,8 @@ def generate_mix_script(analysis_file_a: str, analysis_file_b: str,
             raise ValueError("Generated script failed validation")
         
         # Enhance with defaults and fixes
-        mix_script_data = enhance_script_with_defaults(mix_script_data, data_a, data_b, analysis_file_a, analysis_file_b)
-        
-        # Save the script
-        with open(output_file_path, 'w') as f:
-            json.dump(mix_script_data, f, indent=2)
+        mix_script_data = enhance_script_with_defaults(mix_script_data, analysis_data_a, analysis_data_b, analysis_file_a, analysis_file_b)
             
-        print(f"\n✅ Successfully generated mix script: {output_file_path}")
         print(f"\n🎯 Mix Strategy: {mix_script_data.get('description', 'N/A')}")
         
         if 'technique_highlights' in mix_script_data:
@@ -347,6 +379,8 @@ def generate_mix_script(analysis_file_a: str, analysis_file_b: str,
         print("\n📋 Command breakdown:")
         for cmd, count in sorted(command_counts.items()):
             print(f"   • {cmd}: {count}")
+        
+        return mix_script_data
         
     except json.JSONDecodeError as e:
         print(f"\n❌ Failed to parse JSON response: {e}")
@@ -435,13 +469,26 @@ Examples:
     if args.create_examples:
         create_example_scripts()
     elif args.analysis_file_a and args.analysis_file_b and args.output_file:
-        generate_mix_script(
-            args.analysis_file_a, 
-            args.analysis_file_b, 
+        # Read analysis files
+        print("\n📁 Loading analysis files...")
+        with open(args.analysis_file_a, 'r') as f:
+            data_a = json.load(f)
+        with open(args.analysis_file_b, 'r') as f:
+            data_b = json.load(f)
+
+        mix_script_data = generate_mix_script(
+            data_a,
+            data_b, 
             args.prompt, 
             args.output_file,
             args.style,
             args.model
         )
+
+        # Save the generated mix script
+        print(f"\n💾 Saving mix script to: {args.output_file}")
+        with open(args.output_file, 'w') as f:
+            json.dump(mix_script_data, f, indent=2)
+        print("✅ Successfully saved mix script")
     else:
         parser.print_help()

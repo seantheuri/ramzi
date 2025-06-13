@@ -9,6 +9,26 @@ from scipy.stats import skew, kurtosis
 import warnings
 warnings.filterwarnings('ignore')
 
+# ------------------------------------------------------------------------
+# Helper: convert NumPy scalars / arrays to native Python types for JSON
+# ------------------------------------------------------------------------
+
+def _sanitize(obj):
+    """Recursively convert NumPy data types to JSON‐serialisable natives."""
+    import numpy as _np
+    if isinstance(obj, dict):
+        return {k: _sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize(v) for v in obj]
+    if isinstance(obj, (_np.integer,)):
+        return int(obj)
+    if isinstance(obj, (_np.floating,)):
+        return float(obj)
+    if isinstance(obj, _np.bool_):
+        return bool(obj)
+    if isinstance(obj, _np.ndarray):
+        return [_sanitize(x) for x in obj.tolist()]
+    return obj
 
 def estimate_key(y, sr):
     """
@@ -544,33 +564,59 @@ def analyze_song(file_path, include_lyrics=True):
 
         # Lyrics transcription
         lyrics_timed = []
+        lyrics_text = ""
         if include_lyrics:
-            print("  - Transcribing lyrics...")
-            try:
-                client = OpenAI()
-                with open(file_path, "rb") as audio_file:
-                    transcription = client.audio.transcriptions.create(
-                        model="whisper-1",
-                        file=audio_file,
-                        response_format="verbose_json",
-                        timestamp_granularities=["word"]
-                    )
-                
-                if hasattr(transcription, 'words') and transcription.words:
-                    lyrics_timed = [
-                        {
-                            "word": word.word,
-                            "start": word.start,
-                            "end": word.end
-                        }
-                        for word in transcription.words
-                    ]
+            print("  - Transcribing lyrics with OpenAI Whisper...")
+            if not os.environ.get("OPENAI_API_KEY"):
+                print("    ⚠️  OPENAI_API_KEY not set – skipping transcription")
+            else:
+                try:
+                    client = OpenAI()
+                    with open(file_path, "rb") as audio_file:
+                        transcription = client.audio.transcriptions.create(
+                            model="whisper-1",
+                            file=audio_file,
+                            response_format="verbose_json",
+                            timestamp_granularities=["word"]
+                        )
+
+                    # Convert OpenAI object to plain dict when possible
+                    if hasattr(transcription, "to_dict"):
+                        t_data = transcription.to_dict()
+                    elif hasattr(transcription, "model_dump"):
+                        t_data = transcription.model_dump()
+                    else:
+                        t_data = transcription  # already dict-like
+
+                    # Aggregate word-level timestamps
+                    words_src = []
+                    if isinstance(t_data, dict):
+                        if t_data.get("words"):
+                            words_src = t_data["words"]
+                        else:
+                            for seg in t_data.get("segments", []):
+                                words_src.extend(seg.get("words", []))
+                    else:
+                        if getattr(transcription, "words", None):
+                            words_src = transcription.words
+                        else:
+                            for seg in getattr(transcription, "segments", []):
+                                words_src.extend(getattr(seg, "words", []))
+
+                    for w in words_src:
+                        try:
+                            word_txt = w.get("word") if isinstance(w, dict) else getattr(w, "word", "")
+                            start_val = w.get("start") if isinstance(w, dict) else getattr(w, "start", 0)
+                            end_val = w.get("end") if isinstance(w, dict) else getattr(w, "end", 0)
+                            lyrics_timed.append({"word": word_txt, "start": float(start_val), "end": float(end_val)})
+                        except Exception:
+                            continue
+
+                    lyrics_text = (t_data.get("text") if isinstance(t_data, dict) else getattr(transcription, "text", "")).strip()
                     print(f"    ✓ Transcribed {len(lyrics_timed)} words")
-                else:
-                    print("    - No word-level timestamps available")
-            except Exception as e:
-                print(f"    - Transcription failed: {e}")
-        
+                except Exception as e:
+                    print(f"    - Transcription failed: {e}")
+
         # Compile comprehensive analysis
         analysis_data = {
             # Meta information
@@ -625,6 +671,7 @@ def analyze_song(file_path, include_lyrics=True):
             "beat_grid_seconds": beat_times.tolist(),
             "structural_analysis": structural_analysis,
             "lyrics_timed": lyrics_timed,
+            "lyrics_text": lyrics_text,
             
             # Additional features
             "spectral_features": spectral_features,
@@ -667,7 +714,7 @@ if __name__ == "__main__":
         
         # Save results
         with open(output_path, 'w') as f:
-            json.dump(analysis_result, f, indent=2)
+            json.dump(_sanitize(analysis_result), f, indent=2)
             
         print(f"\n✅ Analysis saved to: {output_path}")
         
